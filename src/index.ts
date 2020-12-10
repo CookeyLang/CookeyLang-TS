@@ -1,12 +1,15 @@
 import * as fs from "fs/promises";
 import { Lexer } from "./lexer";
+import { Parser } from "./parser";
 
 async function interpretText(code: string, file: string) {
   const lex = new Lexer(code, file);
-  lex.init();
+  const tokens = lex.init();
 
   if (lex.hasError) return;
-  console.log(lex.tokens);
+
+  const psr = new Parser(tokens, file);
+  const tree = psr.init();
 }
 
 async function interpretFile(file: string) {

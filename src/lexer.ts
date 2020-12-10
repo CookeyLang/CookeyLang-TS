@@ -8,8 +8,8 @@ class Lexer {
   private line = 1; col = 1;
   private i = 0;
 
-  tokens: Token[] = [];
-  reserved: { [i: string]: TType } = {
+  private tokens: Token[] = [];
+  private reserved: { [i: string]: TType } = {
     // Variables
     "var": TType.VAR, "final": TType.FINAL, "deleteVariable": TType.DELETEVARIABLE,
 
@@ -228,6 +228,8 @@ class Lexer {
     }
 
     this.append(TType.END);
+
+    return this.tokens;
   }
 
 

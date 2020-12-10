@@ -18,3 +18,8 @@ Welcome to cookeylang! It is a dynamic, interpreted, and class-based language. I
 
 ## Learn
 Currently, use the [official website](https://cookeylangteam.repl.co) to learn CookeyLang.
+
+## Testing
+```sh
+npm run test
+```

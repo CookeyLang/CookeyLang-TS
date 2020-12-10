@@ -1,6 +1,7 @@
 const { Lexer } = require("../dist/lexer");
 const { Token } = require("../dist/token");
 
+
 describe("Lexer", () => {
   test("strings", () => {
     const lex = new Lexer(`"str"
@@ -38,6 +39,6 @@ describe("Lexer", () => {
     const lex = new Lexer(`var\nvariable`, "unknown"); lex.init();
 
     expect(lex.hasError).toBe(false);
-    expect(lex.tokens).toEqual([ new Token(1, 3, 'unknown', 0, 'var'), new Token(2, 8, 'unknown', 29, 'variable'), new Token(2, 9, 'unknown', 65, '') ])
+    expect(lex.tokens).toEqual([ new Token(1, 3, 'unknown', 0, 'var'), new Token(2, 8, 'unknown', 29, 'variable'), new Token(2, 9, 'unknown', 65, '') ]);
   });
-})
+});
