@@ -134,6 +134,7 @@ class Lexer {
               if (this.curr() == '\n') this.newline();
               else this.next();
 
+              // escape sequences
               if (this.curr() == '\\') {
                 let next = this.peek();
                 this.newline();
@@ -192,6 +193,10 @@ class Lexer {
                   case '\\':
                     text += '\\';
                     break;
+                  
+                  case '\n':
+                    // ignore newlines
+                    break;
 
                   default:
                     this.error(`Invalid escape sequence '${this.curr()}'.`);
@@ -233,7 +238,7 @@ class Lexer {
   }
 
 
-  private append(type: TType, value: unknown = "") {
+  private append(type: TType, value: literal = "") {
     this.tokens.push(new Token(this.line, this.col, this.file, type, value));
   }
 

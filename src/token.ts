@@ -36,9 +36,9 @@ enum TType {
 class Token {
   line: number; col: number;
   type: TType;
-  value: unknown; file: string;
+  value: literal; file: string;
 
-  constructor(line: number, col: number, file: string, type: TType, value: unknown) {
+  constructor(line: number, col: number, file: string, type: TType, value: literal) {
     this.line = line, this.col = col, this.file = file, this.type = type, this.value = value;
   }
 };

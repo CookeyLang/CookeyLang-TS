@@ -1,11 +1,14 @@
 import { Base } from "./expr/base";
 import * as Expr from "./expr/expr";
+
 import { TType, Token } from "./token";
+
 
 class Parser {
   private i = 0;
   private tokens: Token[] = [];
   private file: string;
+  hasError = false;
 
   constructor(tokens: Token[], file: string) {
     this.file = file;
@@ -82,7 +85,7 @@ class Parser {
   private primary(): Base {
     if (this.match(TType.FALSE)) return new Expr.Literal(this.previous(), false);
     if (this.match(TType.TRUE)) return new Expr.Literal(this.previous(), true);
-    if (this.match(TType.NAV)) return new Expr.Literal(this.previous(), null);
+    if (this.match(TType.NAV)) return new Expr.Literal(this.previous(), null as literal);
 
     if (this.match(TType.NUMBER, TType.STRING)) {
       return new Expr.Literal(this.previous(), this.previous().value);
@@ -122,11 +125,11 @@ class Parser {
     return this.tokens[this.i - 1];
   }
 
-  private consume(type: TType, error: string) {
+  private consume(type: TType, message: string) {
     if (this.match(type)) return this.previous();
-
-    console.log("ERROR TODO!", error);
-    // todo: error
+    
+    this.hasError = true;
+    console.log(`<${this.file}> [ ${this.tokens[this.i].line} : ${this.tokens[this.i].col} ] ${message}`);
   }
 }
 

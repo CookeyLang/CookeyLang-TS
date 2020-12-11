@@ -1,15 +1,16 @@
 import { Base } from "./base";
-import { Token, TType } from "../token";
+import { Token } from "../token";
+import { Visitor } from "./visitor";
 
 class Literal extends Base {
   value;
 
-  constructor(token: Token, value: unknown) {
+  constructor(token: Token, value: literal) {
     super(token);
     this.value = value;
   }
 
-  print() { return String(this.value); }
+  visit(visit: Visitor): literal { return visit.Literal(this); }
 }
 
 class Binary extends Base {
@@ -24,7 +25,7 @@ class Binary extends Base {
     this.right = right;
   }
 
-  print() { return `(${TType[this.op.type]} ${this.left.print()} ${this.right.print()})`; }
+  visit(visit: Visitor): literal { return visit.Binary(this); }
 }
 
 class Unary extends Base {
@@ -37,7 +38,7 @@ class Unary extends Base {
     this.right = right;
   }
 
-  print() { return `(${TType[this.op.type]} ${this.right.print()})`; }
+  visit(visit: Visitor): literal { return visit.Unary(this); }
 }
 
 class Grouping extends Base {
@@ -48,7 +49,7 @@ class Grouping extends Base {
     this.value = value;
   }
 
-  print() { return `(${this.value.print()})`; }
+  visit(visit: Visitor): literal { return visit.Grouping(this); }
 }
 
 export { Literal, Binary, Unary, Grouping };

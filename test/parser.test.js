@@ -1,6 +1,7 @@
 const { Token, TType } = require("../dist/token");
 const { Lexer } = require("../dist/lexer");
 const { Parser } = require("../dist/parser");
+const { AstPrinter } = require("../dist/debug/astprinter");
 const Expr = require("../dist/expr/expr");
 
 
@@ -13,7 +14,7 @@ describe("Parser", () => {
       new Expr.Literal(new Token(0, 0, '', TType.NUMBER, 4), 4)
     );
 
-    expect(tree.print()).toBe("(PLUS (MINUS 3) 4)");
+    expect(new AstPrinter(tree).init()).toBe("(PLUS (MINUS 3) 4)");
   });
 
   test("math parser", () => {
@@ -23,8 +24,8 @@ describe("Parser", () => {
 
     expect(lex.hasError).toBe(false);
 
-    const txt = new Parser(tokens, 'unknown').init().print();
+    const txt = new Parser(tokens, 'unknown').init();
 
-    expect(txt).toBe("(PLUS (TIMES 3 2) (TIMES ((PLUS 5 6)) 3))");
-  })
+    expect(new AstPrinter(txt).init()).toBe("(PLUS (TIMES 3 2) (TIMES ((PLUS 5 6)) 3))");
+  });
 });
