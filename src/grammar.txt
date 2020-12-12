@@ -4,7 +4,8 @@ equality => comparison ( ( "!=" | "==" ) comparison )*
 comparison => addition ( ( ">" | ">=" | "<" | "<=" ) addition )*
 
 addition => multiplication ( ( "+" | "-" ) multiplication )*
-multiplication => unary ( ( "*" | "/" ) unary )*
+multiplication => power ( ( "*" | "/" | "%" ) power )*
+power => unary ( "^" unary )*
 
 unary => ( "!" | "-" ) unary | primary
 

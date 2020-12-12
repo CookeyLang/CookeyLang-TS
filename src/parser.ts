@@ -61,9 +61,21 @@ class Parser {
   }
 
   private multiplication() {
+    let expr: Base = this.power();
+
+    while (this.match(TType.DIVIDE, TType.TIMES, TType.MODULO)) {
+      let op: Token = this.previous();
+      let right: Base = this.power();
+      expr = new Expr.Binary(expr, op, right);
+    }
+
+    return expr;
+  }
+
+  private power() {
     let expr: Base = this.unary();
 
-    while (this.match(TType.DIVIDE, TType.TIMES)) {
+    while (this.match(TType.POWER)) {
       let op: Token = this.previous();
       let right: Base = this.unary();
       expr = new Expr.Binary(expr, op, right);

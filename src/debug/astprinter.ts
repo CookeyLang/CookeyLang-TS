@@ -14,7 +14,9 @@ class AstPrinter extends Visitor {
   }
 
   init() {
-    return this.tree.visit(this);
+    return `== PARSER ==
+${this.tree.visit(this)}
+== RESRAP ==`;
   }
 
   Literal(self: Expr.Literal) {

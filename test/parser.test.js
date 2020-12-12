@@ -14,7 +14,9 @@ describe("Parser", () => {
       new Expr.Literal(new Token(0, 0, '', TType.NUMBER, 4), 4)
     );
 
-    expect(new AstPrinter(tree).init()).toBe("(PLUS (MINUS 3) 4)");
+    expect(new AstPrinter(tree).init()).toBe(`== PARSER ==
+(PLUS (MINUS 3) 4)
+== RESRAP ==`);
   });
 
   test("math parser", () => {
@@ -26,6 +28,8 @@ describe("Parser", () => {
 
     const txt = new Parser(tokens, 'unknown').init();
 
-    expect(new AstPrinter(txt).init()).toBe("(PLUS (TIMES 3 2) (TIMES ((PLUS 5 6)) 3))");
+    expect(new AstPrinter(txt).init()).toBe(`== PARSER ==
+(PLUS (TIMES 3 2) (TIMES ((PLUS 5 6)) 3))
+== RESRAP ==`);
   });
 });

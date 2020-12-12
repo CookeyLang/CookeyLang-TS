@@ -42,6 +42,7 @@ class Lexer {
 
   init() {
     while (this.isValid()) {
+      // shebang
       if (this.i == 0 && this.curr() == "#" && this.peek() == "!") {
         this.next(); // #
         this.next(); // !
@@ -50,25 +51,26 @@ class Lexer {
         }
       }
 
+      // number
       if (this.isNumber(this.curr())) {
         let number = this.curr();
-        while (this.isNumber(this.peek()) && this.isValid()) {
+        while ((this.isNumber(this.peek()) || this.peek() == '_') && this.isValid()) {
           this.next();
-          number += this.curr();
+          if (this.curr() != '_') number += this.curr();
         }
 
         if (this.peek() == '.') {
           this.next(); // .
           number += this.curr();
 
-          while (this.isNumber(this.peek()) && this.isValid()) {
+          while ((this.isNumber(this.peek()) || this.peek() == '_') && this.isValid()) {
             this.next();
-            number += this.curr();
+            if (this.curr() != '_') number += this.curr();
           }
         }
 
         this.append(TType.NUMBER, Number(number));
-      } else if (this.isAlpha(this.curr())) {
+      } else if (this.isAlpha(this.curr())) { // identifier
         let text = this.curr();
 
         while (this.isAlphaNum(this.peek()) && this.isValid()) {

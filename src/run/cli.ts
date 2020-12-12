@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { interpretFile } from "../index";
+import { interpretDebug, interpretFile } from "../index";
 
 if (process.argv.length != 3) {
   console.log("<CookeyLang> You must provide one input file!");
@@ -8,4 +8,4 @@ if (process.argv.length != 3) {
   process.exit(1);
 }
 
-interpretFile(process.argv[2]);
+interpretDebug(process.argv[2]);

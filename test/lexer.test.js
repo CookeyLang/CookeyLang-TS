@@ -41,4 +41,12 @@ describe("Lexer", () => {
     expect(lex.hasError).toBe(false);
     expect(lex.tokens).toEqual([ new Token(1, 3, 'unknown', 0, 'var'), new Token(2, 8, 'unknown', 29, 'variable'), new Token(2, 9, 'unknown', 65, '') ]);
   });
+
+  
+  test("number seperator", () => {
+    const lex = new Lexer(`2_3_`, "unknown"); lex.init();
+
+    expect(lex.hasError).toBe(false);
+    expect(lex.tokens).toEqual([ new Token(1, 4, "unknown", 28, 23), new Token(1, 5, "unknown", 65, '') ]);
+  });
 });

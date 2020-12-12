@@ -40,6 +40,12 @@ class Interpreter extends Visitor {
 
       case TType.DIVIDE:
         return Number(left) / Number(right);
+      
+      case TType.MODULO:
+        return Number(left) % Number(right);
+      
+      case TType.POWER:
+        return Number(left) ** Number(right);
     }
 
     return 0;
@@ -60,7 +66,7 @@ class Interpreter extends Visitor {
   }
 
   Grouping(self: Expr.Grouping): literal {
-    return self.visit(this);
+    return self.value.visit(this);
   }
 }
 
