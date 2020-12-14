@@ -21,7 +21,7 @@ describe("Debugger", () => {
   });
 
   test("ast printer", () => {
-    const lex = new Lexer("5_+3_", "unknown");
+    const lex = new Lexer("5_+3_;", "unknown");
     const tok = lex.init();
 
     expect(lex.hasError).toBe(false);
@@ -33,7 +33,7 @@ describe("Debugger", () => {
 
     const astprnt = new AstPrinter(tree);
     expect(astprnt.init()).toBe(`== PARSER ==
-(PLUS 5 3)
+(PLUS 5 3);
 == RESRAP ==`);
   })
 });

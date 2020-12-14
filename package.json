@@ -5,10 +5,13 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest --silent",
+
     "dev": "tsc -w",
-    "prod": "tsc",
+    "prod": "tsc --sourceMap false",
+
     "start": "node dist/run/cli",
     "cookeylang": "node dist/run/cli",
+    "preinstall": "tsc --sourceMap false",
     "postinstall": "node dist/run/welcome"
   },
   "repository": {

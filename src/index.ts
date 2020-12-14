@@ -37,13 +37,13 @@ async function interpretDebug(file: string) {
   console.log(tokenPrinter(tokens));
 
   const psr = new Parser(tokens, file);
-  const tree = psr.init();
+  const trees = psr.init();
 
   if (psr.hasError) return;
-  const astprnt = new AstPrinter(tree);
+  const astprnt = new AstPrinter(trees);
   console.log(astprnt.init());
 
-  const ipt = new Interpreter(tree);
+  const ipt = new Interpreter(trees);
   let result = ipt.init();
 
   return result;

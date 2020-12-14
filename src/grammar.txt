@@ -1,3 +1,10 @@
+program => statement* EOF
+
+statement => exprStmt | exitStmt
+
+exprStmt = expression ";"
+exitStmt = "exit" expression? ";"
+
 expression => equality
 
 equality => comparison ( ( "!=" | "==" ) comparison )*
@@ -9,4 +16,4 @@ power => unary ( "^" unary )*
 
 unary => ( "!" | "-" ) unary | primary
 
-primary => NUMBER | STRING | "(" expression ")"
+primary => NUMBER | STRING | "(" expression ")" | IDENTIFIER

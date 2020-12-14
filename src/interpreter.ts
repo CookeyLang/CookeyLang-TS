@@ -1,4 +1,5 @@
 import { Base } from "./expr/base";
+import * as Stmt from "./expr/stmt";
 import * as Expr from "./expr/expr";
 
 import { Visitor } from "./expr/visitor";
@@ -7,16 +8,32 @@ import { TType } from "./token";
 
 
 class Interpreter extends Visitor {
-  tree: Base;
+  trees: Base[];
   hasError = false;
 
-  constructor(tree: Base) {
+  constructor(trees: Base[]) {
     super();
-    this.tree = tree;
+    this.trees = trees;
   }
 
   init() {
-    return this.tree.visit(this);
+    for (const tree of this.trees) {
+      tree.visit(this);
+    }
+    // return this.trees.visit(this);
+  }
+
+
+  ExprStmt(self: Stmt.ExprStmt): literal {
+    let expr = self.expr.visit(this);
+    console.log(expr);
+    return expr;
+  }
+
+  ExitStmt(self: Stmt.ExitStmt) {
+    let exitCode = self.exit.visit(this);
+    console.log(exitCode); // for now
+    return exitCode;
   }
 
 

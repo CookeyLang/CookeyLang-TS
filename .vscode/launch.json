@@ -14,7 +14,7 @@
         "${workspaceFolder}/dist/**/*.js"
       ],
       "args": [
-        "./test/lexer/numbers.clf"
+        "./test/parser/stmt.clf"
       ]
     }
   ]

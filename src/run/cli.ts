@@ -8,4 +8,4 @@ if (process.argv.length != 3) {
   process.exit(1);
 }
 
-interpretDebug(process.argv[2]);
+interpretFile(process.argv[2]);

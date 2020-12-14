@@ -1,23 +1,35 @@
 import { Base } from "../expr/base";
 import { Visitor } from "../expr/visitor";
+
+import * as Stmt from "../expr/stmt";
 import * as Expr from "../expr/expr";
 
 import { TType } from "../token";
 
 
 class AstPrinter extends Visitor {
-  tree: Base;
+  trees: Base[];
 
-  constructor(tree: Base) {
+  constructor(trees: Base[]) {
     super();
-    this.tree = tree;
+    this.trees = trees;
   }
 
   init() {
     return `== PARSER ==
-${this.tree.visit(this)}
+${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
 == RESRAP ==`;
   }
+
+  
+  ExprStmt(self: Stmt.ExprStmt): string {
+    return `${self.expr.visit(this)};`
+  }
+
+  ExitStmt(self: Stmt.ExitStmt): string {
+    return `(exit ${self.exit.visit(this)})`;
+  }
+
 
   Literal(self: Expr.Literal) {
     return String(self.value);

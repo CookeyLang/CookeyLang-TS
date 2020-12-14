@@ -54,7 +54,7 @@ class Lexer {
       // number
       if (this.isNumber(this.curr())) {
         let number = this.curr();
-        while ((this.isNumber(this.peek()) || this.peek() == '_') && this.isValid()) {
+        while (this.isValid() && (this.isNumber(this.peek()) || this.peek() == '_')) {
           this.next();
           if (this.curr() != '_') number += this.curr();
         }
@@ -63,7 +63,7 @@ class Lexer {
           this.next(); // .
           number += this.curr();
 
-          while ((this.isNumber(this.peek()) || this.peek() == '_') && this.isValid()) {
+          while (this.isValid() && (this.isNumber(this.peek()) || this.peek() == '_')) {
             this.next();
             if (this.curr() != '_') number += this.curr();
           }
@@ -73,7 +73,7 @@ class Lexer {
       } else if (this.isAlpha(this.curr())) { // identifier
         let text = this.curr();
 
-        while (this.isAlphaNum(this.peek()) && this.isValid()) {
+        while (this.isValid() && this.isAlphaNum(this.peek())) {
           this.next();
           text += this.curr();
         }
@@ -132,7 +132,7 @@ class Lexer {
           case '\'': {
             let strtype = this.curr();
             let text = "";
-            while (this.peek() != strtype && this.isValid()) {
+            while (this.isValid() && this.peek() != strtype) {
               if (this.curr() == '\n') this.newline();
               else this.next();
 
@@ -159,7 +159,7 @@ class Lexer {
 
                   case 'm':
                     let keycode = "";
-                    while (this.isNumber(this.peek()) && this.isValid()) {
+                    while (this.isValid() && this.isNumber(this.peek())) {
                       this.next();
                       keycode += this.curr();
                     }

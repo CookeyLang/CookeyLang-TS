@@ -1,0 +1,4 @@
+7 + 6 - 3 / 2;
+exit 1;
+%% this doesn't get called!
+7 + 3;

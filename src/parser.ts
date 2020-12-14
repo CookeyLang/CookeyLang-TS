@@ -1,4 +1,5 @@
 import { Base } from "./expr/base";
+import * as Stmt from "./expr/stmt";
 import * as Expr from "./expr/expr";
 
 import { TType, Token } from "./token";
@@ -16,10 +17,38 @@ class Parser {
   }
 
   init() {
-    return this.expression();
+    let stmts: Base[] = [];
+
+    while (this.isValid()) {
+      stmts.push(this.stmt());
+    }
+
+    return stmts;
   }
 
 
+  private stmt() {
+    if (this.match(TType.EXIT)) return this.exitStmt();
+
+    return this.exprStmt();
+  }
+
+  private exprStmt() {
+    let expr = this.expression();
+
+    this.consume(TType.SEMI, "Expected ';' after expression");
+    return new Stmt.ExprStmt(expr);
+  }
+
+  private exitStmt() {
+    let num: Base = new Expr.Literal(this.previous(), 0);
+    if (!this.match(TType.SEMI)) num = this.expression();
+
+    this.consume(TType.SEMI, "Expected ';' after exit.");
+    return new Stmt.ExitStmt(num);
+  }
+
+  
   private expression() {
     return this.equality();
   }
@@ -114,7 +143,7 @@ class Parser {
 
 
   private isValid() {
-    return this.i < this.tokens.length;
+    return this.i < this.tokens.length && this.tokens[this.i].type != TType.END;
   }
 
   private match(...tokens: TType[]) {
@@ -137,11 +166,45 @@ class Parser {
     return this.tokens[this.i - 1];
   }
 
+  private peek() {
+    return this.tokens[this.i];
+  }
+
   private consume(type: TType, message: string) {
     if (this.match(type)) return this.previous();
-    
+
     this.hasError = true;
     console.log(`<${this.file}> [ ${this.tokens[this.i].line} : ${this.tokens[this.i].col} ] ${message}`);
+    this.synchronize();
+  }
+
+  private synchronize() {
+    this.advance(); // the erroneous token
+
+    while (this.isValid()) {
+      if (this.previous().type == TType.SEMI) return;
+
+      switch (this.peek().type) {
+        case TType.CLASS:
+        case TType.FUNCTION:
+        case TType.LAMBDA:
+        case TType.VAR:
+        case TType.FINAL:
+        case TType.DELETEVARIABLE:
+        case TType.FOR:
+        case TType.WHILE:
+        case TType.FOREACH:
+        case TType.FORREP:
+        case TType.SWITCH:
+        case TType.IF:
+        case TType.RET:
+        case TType.EXIT:
+        case TType.BREAK:
+          return;
+      }
+
+      this.advance();
+    }
   }
 }
 
