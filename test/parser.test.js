@@ -32,4 +32,14 @@ describe("Parser", () => {
 (PLUS (TIMES 3 2) (TIMES ((PLUS 5 6)) 3));
 == RESRAP ==`);
   });
+
+  test("final value error", () => {
+    const lex = new Lexer("final a;", "unknown");
+    const tokens = lex.init();
+
+    expect(lex.hasError).toBe(false);
+
+    const parser = new Parser(tokens, "unknown"); parser.init();
+    expect(parser.hasError).toBe(true);
+  });
 });

@@ -1,5 +1,2 @@
-dist
-src
-test
-.vscode
-tsconfig.json
+**
+!dist/**

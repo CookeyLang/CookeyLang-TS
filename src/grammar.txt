@@ -1,6 +1,10 @@
-program => statement* EOF
+program => decl* EOF
 
-statement => exprStmt | exitStmt
+decl => varDecl | stmt
+
+varDecl => ( "var" | "final" ) IDENTIFIER ( "=" expression )? ";"
+
+stmt => exprStmt | exitStmt
 
 exprStmt = expression ";"
 exitStmt = "exit" expression? ";"

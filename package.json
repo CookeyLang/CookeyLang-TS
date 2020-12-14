@@ -9,29 +9,36 @@
     "prod": "tsc --sourceMap false",
     "start": "node dist/run/cli",
     "cookeylang": "node dist/run/cli",
-    "preinstall": "tsc --sourceMap false",
     "postinstall": "node dist/run/welcome"
   },
+
+  "files": ["dist/**/*"],
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cookeylang/cookeylang-ts.git"
   },
+
   "bin": {
     "cookeylang": "dist/run/cli.js",
     "welcome": "dist/run/welcome.js"
   },
+
   "keywords": [
     "CookeyLang",
     "Cookey",
     "Dynamic",
     "Interpreted"
   ],
+
   "author": "Coder100, JDOG787, CodingCactus, Codemonkey51, RaidTheWeb, TheSummit3145",
   "license": "CC-BY-NC-SA-4.0",
   "bugs": {
     "url": "https://github.com/cookeylang/cookeylang-ts/issues"
   },
+
   "homepage": "https://github.com/cookeylang/cookeylang-ts#readme",
+  
   "devDependencies": {
     "@types/node": "^14.14.11",
     "jest": "^26.6.3",

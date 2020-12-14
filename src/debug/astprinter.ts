@@ -22,6 +22,10 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
   }
 
   
+  VarDecl(self: Stmt.VarDecl): string {
+    return `${TType[self.mut.type]} ${self.name.value} = ${self.value.visit(this)};`;
+  }
+
   ExprStmt(self: Stmt.ExprStmt): string {
     return `${self.expr.visit(this)};`
   }
@@ -41,6 +45,10 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
 
   Unary(self: Expr.Unary): string {
     return `(${TType[self.op.type]} ${self.right.visit(this)})`
+  }
+
+  Variable(self: Expr.Variable): string {
+    return `${self.name}`;
   }
 
   Grouping(self: Expr.Grouping): string {

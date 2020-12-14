@@ -41,6 +41,17 @@ class Unary extends Base {
   visit(visit: Visitor): literal { return visit.Unary(this); }
 }
 
+class Variable extends Base {
+  name: Token;
+
+  constructor(name: Token) {
+    super(name);
+    this.name = name;
+  }
+
+  visit(visit: Visitor): literal { return visit.Variable(this); }
+}
+
 class Grouping extends Base {
   value: Base;
 
@@ -52,4 +63,4 @@ class Grouping extends Base {
   visit(visit: Visitor): literal { return visit.Grouping(this); }
 }
 
-export { Literal, Binary, Unary, Grouping };
+export { Literal, Binary, Unary, Variable, Grouping };

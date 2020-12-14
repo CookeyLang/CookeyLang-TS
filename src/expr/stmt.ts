@@ -1,5 +1,21 @@
 import { Base } from "./base";
+import { Token } from "../token";
 import { Visitor } from "./visitor";
+
+class VarDecl extends Base {
+  mut: Token;
+  name: Token;
+  value: Base;
+
+  constructor(mut: Token, name: Token, value: Base) {
+    super(name);
+    this.mut = mut;
+    this.name = name;
+    this.value = value;
+  }
+
+  visit(visit: Visitor): literal { return visit.VarDecl(this); }
+}
 
 class ExprStmt extends Base {
   expr: Base;
@@ -23,4 +39,4 @@ class ExitStmt extends Base {
   visit(visit: Visitor): literal { return visit.ExitStmt(this); }
 }
 
-export { ExprStmt, ExitStmt };
+export { VarDecl, ExprStmt, ExitStmt };

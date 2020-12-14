@@ -20,12 +20,31 @@ class Parser {
     let stmts: Base[] = [];
 
     while (this.isValid()) {
-      stmts.push(this.stmt());
+      stmts.push(this.decl());
     }
 
     return stmts;
   }
 
+
+  private decl() {
+    if (this.match(TType.VAR, TType.FINAL)) return this.varDecl();
+
+    return this.stmt();
+  }
+
+  private varDecl() {
+    let mut = this.previous();
+    let name = this.consume(TType.IDENTIFIER, "Expected a variable name.");
+
+    let value: Base | null = null;
+    if (this.match(TType.EQ)) value = this.expression();
+    this.consume(TType.SEMI, "Expected a ';' after variable declaration.");
+
+    if (value == null && mut.type == TType.FINAL) this.error("Constants require a value");
+
+    return new Stmt.VarDecl(mut, name!, value!);
+  }
 
   private stmt() {
     if (this.match(TType.EXIT)) return this.exitStmt();
@@ -138,6 +157,8 @@ class Parser {
       return new Expr.Grouping(expr);
     }
 
+    if (this.match(TType.IDENTIFIER)) return new Expr.Variable(this.previous());
+
     return new Base();
   }
 
@@ -173,6 +194,10 @@ class Parser {
   private consume(type: TType, message: string) {
     if (this.match(type)) return this.previous();
 
+    this.error(message);
+  }
+
+  private error(message: string) {
     this.hasError = true;
     console.log(`<${this.file}> [ ${this.tokens[this.i].line} : ${this.tokens[this.i].col} ] ${message}`);
     this.synchronize();
