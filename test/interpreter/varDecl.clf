@@ -1,3 +1,7 @@
 var a = 5;
 %% final b;
 final c = 321;
+
+exit c;
+exit "test";
+exit b;

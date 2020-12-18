@@ -5,11 +5,13 @@ import * as Expr from "./expr/expr";
 import { Visitor } from "./expr/visitor";
 
 import { TType } from "./token";
+import { Environment } from "./environment";
+import { CookeyError } from "./errors";
 
 
 class Interpreter extends Visitor {
   trees: Base[];
-  hasError = false;
+  private environment = new Environment();
 
   constructor(trees: Base[]) {
     super();
@@ -17,28 +19,47 @@ class Interpreter extends Visitor {
   }
 
   init() {
-    for (const tree of this.trees) {
-      tree.visit(this);
+    try {
+      for (const tree of this.trees) {
+        tree.visit(this);
+      }
+    } catch(e) {
+      if (e instanceof CookeyError) {
+        console.log(`<${e.lineData.file}> [ ${e.lineData.line} : ${e.lineData.col} ] ${e.message}`);
+      }
     }
-    // return this.trees.visit(this);
   }
 
 
+  VarDecl(self: Stmt.VarDecl): literal {
+    let value: literal = null;
+    if (self.value) value = self.value.visit(this);
+
+    this.environment.define(self.name, value);
+
+    return null;
+  }
+
   ExprStmt(self: Stmt.ExprStmt): literal {
-    let expr = self.expr.visit(this);
-    console.log(expr);
-    return expr;
+    self.expr.visit(this);
+    return null;
   }
 
   ExitStmt(self: Stmt.ExitStmt) {
     let exitCode = self.exit.visit(this);
     console.log(exitCode); // for now
-    return exitCode;
+    return null;
   }
 
 
   Literal(self: Expr.Literal): literal {
     return self.value;
+  }
+
+  Assign(self: Expr.Assign): literal {
+    let value = self.value.visit(this);
+    this.environment.assign(self.name, value);
+    return value;
   }
 
   Binary(self: Expr.Binary): literal {
@@ -80,6 +101,10 @@ class Interpreter extends Visitor {
     }
 
     return false;
+  }
+
+  Variable(self: Expr.Variable): literal {
+    return this.environment.get(self.name) as literal;
   }
 
   Grouping(self: Expr.Grouping): literal {

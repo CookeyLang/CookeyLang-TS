@@ -1,4 +1,4 @@
-import * as fs from "fs/promises";
+import { promises as fs } from "fs";
 
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
@@ -43,10 +43,10 @@ async function interpretDebug(file: string) {
   const astprnt = new AstPrinter(trees);
   console.log(astprnt.init());
 
-  // const ipt = new Interpreter(trees);
-  // let result = ipt.init();
+  const ipt = new Interpreter(trees);
+  let result = ipt.init();
 
-  // return result;
+  return result;
 }
 
 async function interpretFile(file: string) {

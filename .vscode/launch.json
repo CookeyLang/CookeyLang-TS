@@ -14,7 +14,7 @@
         "${workspaceFolder}/dist/**/*.js"
       ],
       "args": [
-        "./test/interpreter/varDecl.clf"
+        "./test/interpreter/assignment.clf"
       ]
     }
   ]

@@ -69,7 +69,24 @@ class Parser {
 
   
   private expression() {
-    return this.equality();
+    return this.assignment();
+  }
+
+  private assignment(): Base {
+    let expr = this.equality();
+
+    if (this.match(TType.EQ)) {
+      let value = this.assignment();
+
+      if (expr instanceof Expr.Variable) {
+        let name = expr.name;
+        return new Expr.Assign(name, value);
+      }
+
+      this.error("Invalid assignment target.");
+    }
+
+    return expr;
   }
 
   private equality() {

@@ -12,7 +12,7 @@
     "postinstall": "node dist/run/welcome"
   },
   "files": [
-    "dist/**/*"
+    "dist/**/*.js"
   ],
   "repository": {
     "type": "git",

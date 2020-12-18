@@ -18,6 +18,7 @@ class Visitor {
   ExitStmt(_: Stmt.ExitStmt): literal { return 1; }
 
   Literal(_: Expr.Literal): literal { return 1; }
+  Assign(_: Expr.Assign): literal { return 1; }
   Binary(_: Expr.Binary): literal { return 1; }
   Unary(_: Expr.Unary): literal { return 1; }
   Variable(_: Expr.Variable): literal { return 1; }

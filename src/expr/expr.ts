@@ -3,7 +3,7 @@ import { Token } from "../token";
 import { Visitor } from "./visitor";
 
 class Literal extends Base {
-  value;
+  value: literal;
 
   constructor(token: Token, value: literal) {
     super(token);
@@ -11,6 +11,19 @@ class Literal extends Base {
   }
 
   visit(visit: Visitor): literal { return visit.Literal(this); }
+}
+
+class Assign extends Base {
+  name: Token;
+  value: Base;
+
+  constructor(name: Token, value: Base) {
+    super(name);
+    this.name = name;
+    this.value = value;
+  }
+
+  visit(visit: Visitor): literal { return visit.Assign(this); }
 }
 
 class Binary extends Base {
@@ -63,4 +76,4 @@ class Grouping extends Base {
   visit(visit: Visitor): literal { return visit.Grouping(this); }
 }
 
-export { Literal, Binary, Unary, Variable, Grouping };
+export { Literal, Assign, Binary, Unary, Variable, Grouping };

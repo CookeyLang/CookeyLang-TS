@@ -36,7 +36,11 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
 
 
   Literal(self: Expr.Literal) {
-    return String(self.value);
+    return `${typeof self.value == "string" ? "'" : ""}${String(self.value)}${typeof self.value == "string" ? "'" : ""}`;
+  }
+
+  Assign(self: Expr.Assign): string {
+    return `(${self.name.value} = ${self.value.visit(this)})`;
   }
 
   Binary(self: Expr.Binary): string {
@@ -48,7 +52,7 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
   }
 
   Variable(self: Expr.Variable): string {
-    return `${self.name}`;
+    return `${self.name.value}`;
   }
 
   Grouping(self: Expr.Grouping): string {

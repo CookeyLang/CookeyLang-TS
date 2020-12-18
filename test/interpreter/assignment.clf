@@ -1,0 +1,7 @@
+var a = 5;
+exit a;
+exit a = 6;
+exit a;
+
+exit "test";
+exit "yet another test";
