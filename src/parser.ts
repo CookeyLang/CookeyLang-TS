@@ -49,6 +49,7 @@ class Parser {
   private stmt() {
     if (this.match(TType.IF)) return this.ifStmt();
     if (this.match(TType.WHILE)) return this.whileStmt();
+    if (this.match(TType.DO)) return this.doWhileStmt();
     if (this.match(TType.FOR)) return this.forStmt();
     if (this.match(TType.EXIT)) return this.exitStmt();
     if (this.match(TType.LEFT_BRACE)) return new Stmt.Block(this.block());
@@ -84,6 +85,18 @@ class Parser {
     return new Stmt.WhileStmt(condition, body);
   }
 
+  private doWhileStmt(): Base {
+    let body = this.stmt();
+
+    this.consume(TType.WHILE, "Expected 'while' after statement.");
+    this.consume(TType.LEFT_PAREN, "Expected '(' after 'while' keyword.");
+    let condition = this.expression();
+    this.consume(TType.RIGHT_PAREN, "Expected ')' after expression.");
+    this.consume(TType.SEMI, "Expected ';' after ')'");
+
+    return new Stmt.Block([ body, new Stmt.WhileStmt(condition, body) ]);
+  }
+
   private forStmt(): Base {
     this.consume(TType.LEFT_PAREN, "Expected '(' after 'for' keyword.");
 
@@ -101,14 +114,14 @@ class Parser {
     this.consume(TType.RIGHT_PAREN, "Expected ')' after for loop clauses.");
 
     let body = this.stmt();
-    
+
     // i++;
     if (increment) body = new Stmt.Block([body, new Stmt.ExprStmt(increment)]);
 
     // i < 5;
     if (condition == null) condition = new Expr.Literal(body.lineData, true);
     body = new Stmt.WhileStmt(condition, body);
-    
+
     // i = 0;
     if (initializer) body = new Stmt.Block([initializer, body]);
 

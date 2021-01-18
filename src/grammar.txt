@@ -4,11 +4,12 @@ decl => varDecl | stmt
 
 varDecl => ( "var" | "final" ) IDENTIFIER ( "=" expression )? ";"
 
-stmt => exprStmt | ifStmt | whileStmt | forStmt | exitStmt | block
+stmt => exprStmt | ifStmt | whileStmt | doWhileStmt | forStmt | exitStmt | block
 
 exprStmt => expression ";"
 ifStmt => "if" "(" expression ")" stmt ( "else" stmt )?
 whileStmt => "while" "(" expression ")" stmt
+doWhileStmt => "do" stmt "while" "(" expression ")" ";"
 forStmt => "for" "(" ( varDecl | exprStmt | ";" ) expression? expression? ")" stmt
 exitStmt => "exit" expression? ";"
 block => "{" decl* "}"
