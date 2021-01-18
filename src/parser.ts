@@ -47,7 +47,11 @@ class Parser {
   }
 
   private stmt() {
+    if (this.match(TType.IF)) return this.ifStmt();
+    if (this.match(TType.WHILE)) return this.whileStmt();
+    if (this.match(TType.FOR)) return this.forStmt();
     if (this.match(TType.EXIT)) return this.exitStmt();
+    if (this.match(TType.LEFT_BRACE)) return new Stmt.Block(this.block());
 
     return this.exprStmt();
   }
@@ -59,6 +63,58 @@ class Parser {
     return new Stmt.ExprStmt(expr);
   }
 
+  private ifStmt(): Base {
+    this.consume(TType.LEFT_PAREN, "Expected '(' after if keyword.");
+    let condition = this.expression();
+    this.consume(TType.RIGHT_PAREN, "Expected ')' after if condition.");
+
+    let thenBr = this.stmt();
+    let elseBr: Base | null = null;
+    if (this.match(TType.EL)) elseBr = this.stmt();
+
+    return new Stmt.IfStmt(condition, thenBr, elseBr);
+  }
+
+  private whileStmt(): Base {
+    this.consume(TType.LEFT_PAREN, "Expected '(' after while keyword.");
+    let condition = this.expression();
+    this.consume(TType.RIGHT_PAREN, "Expected ')' after condition.");
+    let body = this.stmt();
+
+    return new Stmt.WhileStmt(condition, body);
+  }
+
+  private forStmt(): Base {
+    this.consume(TType.LEFT_PAREN, "Expected '(' after 'for' keyword.");
+
+    let initializer: Base | null;
+    if (this.match(TType.SEMI)) initializer = null;
+    else if (this.match(TType.VAR)) initializer = this.varDecl();
+    else initializer = this.exprStmt();
+
+    let condition: Base | null = null;
+    if (!this.match(TType.SEMI)) condition = this.expression();
+    this.consume(TType.SEMI, "Expected ';' after for loop condition.");
+
+    let increment: Base | null = null;
+    if (!this.match(TType.SEMI)) increment = this.expression();
+    this.consume(TType.RIGHT_PAREN, "Expected ')' after for loop clauses.");
+
+    let body = this.stmt();
+    
+    // i++;
+    if (increment) body = new Stmt.Block([body, new Stmt.ExprStmt(increment)]);
+
+    // i < 5;
+    if (condition == null) condition = new Expr.Literal(body.lineData, true);
+    body = new Stmt.WhileStmt(condition, body);
+    
+    // i = 0;
+    if (initializer) body = new Stmt.Block([initializer, body]);
+
+    return body;
+  }
+
   private exitStmt() {
     let num: Base = new Expr.Literal(this.previous(), 0);
     if (!this.match(TType.SEMI)) num = this.expression();
@@ -67,13 +123,24 @@ class Parser {
     return new Stmt.ExitStmt(num);
   }
 
-  
+  private block() {
+    let stmts: Base[] = [];
+
+    while (this.isValid() && this.peek().type != TType.RIGHT_BRACE) {
+      stmts.push(this.decl());
+    }
+
+    this.consume(TType.RIGHT_BRACE, "Expected '}' after block.");
+    return stmts;
+  }
+
+
   private expression() {
     return this.assignment();
   }
 
   private assignment(): Base {
-    let expr = this.equality();
+    let expr = this.logicOr();
 
     if (this.match(TType.EQ)) {
       let value = this.assignment();
@@ -84,6 +151,30 @@ class Parser {
       }
 
       this.error("Invalid assignment target.");
+    }
+
+    return expr;
+  }
+
+  private logicOr() {
+    let expr = this.logicAnd();
+
+    while (this.match(TType.OR)) {
+      let op = this.previous();
+      let right = this.logicAnd();
+      expr = new Expr.Logic(expr, op, right);
+    }
+
+    return expr;
+  }
+
+  private logicAnd() {
+    let expr = this.equality();
+
+    while (this.match(TType.AND)) {
+      let op = this.previous();
+      let right = this.equality();
+      expr = new Expr.Logic(expr, op, right);
     }
 
     return expr;
@@ -176,6 +267,7 @@ class Parser {
 
     if (this.match(TType.IDENTIFIER)) return new Expr.Variable(this.previous());
 
+    this.error(`Unexpected token ${TType[this.peek().type]}.`);
     return new Base();
   }
 

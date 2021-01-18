@@ -15,10 +15,14 @@ However, the entry point is actually the Visitor itself, which will call Base wi
 class Visitor {
   VarDecl(_: Stmt.VarDecl): literal { return 1; }
   ExprStmt(_: Stmt.ExprStmt): literal { return 1; }
+  IfStmt(_: Stmt.IfStmt): literal { return 1; }
+  WhileStmt(_: Stmt.WhileStmt): literal { return 1; }
   ExitStmt(_: Stmt.ExitStmt): literal { return 1; }
+  Block(_: Stmt.Block): literal { return 1; }
 
   Literal(_: Expr.Literal): literal { return 1; }
   Assign(_: Expr.Assign): literal { return 1; }
+  Logic(_: Expr.Logic): literal { return 1; }
   Binary(_: Expr.Binary): literal { return 1; }
   Unary(_: Expr.Unary): literal { return 1; }
   Variable(_: Expr.Variable): literal { return 1; }

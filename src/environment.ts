@@ -1,24 +1,58 @@
 import { CookeyError } from "./errors";
-import { Token } from "./token";
+import { Token, TType } from "./token";
 
 class Environment {
-  private values = new Map<string, literal>();
+  private values = new Map<string, { mut: TType.FINAL | TType.VAR, val: literal }>();
 
-  define(key: Token, val: literal) {
-    this.values.set(key.value as string, val);
+  // The parent is what it inherits from, for example:
+  /*
+  {
+    var g = 5; <----- parent
+    {
+      var g2 = 10; <- new Environment
+    }
+  }
+  */
+  private parent: Environment | null;
+  constructor(parent: Environment | null = null) {
+    this.parent = parent;
   }
 
-  get(name: Token) {
+
+  define(mut: Token, key: Token, val: literal) {
+    // disallow multiple assignments
+    if (this.values.has(key.value as string)) throw new CookeyError(key, `${key.value} has already been defined.`);
+    this.values.set(key.value as string, { mut: mut.type as TType.FINAL | TType.VAR, val });
+  }
+
+  get(name: Token): { mut: TType.FINAL | TType.VAR, val: literal } | undefined {
     if (this.values.has(name.value as string)) return this.values.get(name.value as string);
+    if (this.parent) return this.parent.get(name);
     throw new CookeyError(name, `Undefined variable ${name.value}.`);
   }
 
+  getMut(name: Token): TType.VAR | TType.FINAL {
+    if (this.values.has(name.value as string)) return this.values.get(name.value as string)!.mut;
+    // We don't need to get the mutability in the parent
+    // it will either be 'var' or nonexistant
+    return TType.VAR;
+  }
+
   assign(name: Token, val: literal) {
+    let mut = this.getMut(name);
+
+    if (mut == TType.FINAL) throw new CookeyError(name, `Assignment to constant variable ${name.value}.`);
+
     if (this.values.has(name.value as string)) {
-      this.values.set(name.value as string, val);
+      this.values.set(name.value as string, { mut, val });
       return;
     }
-    
+
+    if (this.parent) {
+      this.parent.assign(name, val);
+      return;
+    }
+
     throw new CookeyError(name, `Undefined variable ${name.value}.`);
   }
 }

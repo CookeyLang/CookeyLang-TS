@@ -30,8 +30,20 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
     return `${self.expr.visit(this)};`
   }
 
+  IfStmt(self: Stmt.IfStmt): string {
+    return `(if (${self.condition.visit(this)}) ${self.thenBr.visit(this)}${self.elseBr ? ` else ${self.elseBr.visit(this)}` : ""})`;
+  }
+
+  WhileStmt(self: Stmt.WhileStmt): string {
+    return `(while (${self.condition.visit(this)}) ${self.body.visit(this)})`;
+  }
+
   ExitStmt(self: Stmt.ExitStmt): string {
     return `(exit ${self.exit.visit(this)})`;
+  }
+
+  Block(self: Stmt.Block): string {
+    return `{\n${self.stmts.map(stmt => stmt.visit(this)).join("\n---\n")}\n}`;
   }
 
 
@@ -41,6 +53,10 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
 
   Assign(self: Expr.Assign): string {
     return `(${self.name.value} = ${self.value.visit(this)})`;
+  }
+
+  Logic(self: Expr.Logic): string {
+    return `(${self.left.visit(this)} ${TType[self.op.type]} ${self.right.visit(this)})`;
   }
 
   Binary(self: Expr.Binary): string {

@@ -1,0 +1,6 @@
+exit true or false and true;
+if (1 == 2 and 2 == 3) exit "broke!";
+if (1 == 2 or 1 == 1) exit "which one?";
+exit false and true;
+exit true and false;
+exit (true or false) and true;

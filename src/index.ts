@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import * as readline from "readline";
 
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
@@ -21,7 +22,7 @@ async function interpretText(code: string, file: string) {
 
   const ipt = new Interpreter(tree);
   let result = ipt.init();
-  
+
   console.log(result);
 
   return result;
@@ -54,4 +55,28 @@ async function interpretFile(file: string) {
   return interpretText(code, file);
 }
 
-export { interpretText, interpretDebug, interpretFile };
+function repl() {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  let code = "";
+  let indentation = 0; // each { will add indentation
+
+  console.log("CookeyLang REPL");
+  console.log("Press ^C or \x1b[1mEXIT\x1b[0m to exit.");
+  process.stdout.write("> ");
+  rl.on("line", async inp => {
+    if (inp == "EXIT") process.exit(0);
+    if (inp == "{") indentation++;
+    if (inp == "}" && indentation > 0) indentation--;
+
+    code += inp;
+
+    if (indentation == 0) {
+      await interpretText(code, "repl");
+      code = "";
+    }
+
+    process.stdout.write("> ");
+  });
+}
+
+export { interpretText, interpretDebug, interpretFile, repl };

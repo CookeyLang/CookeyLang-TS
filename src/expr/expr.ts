@@ -26,6 +26,21 @@ class Assign extends Base {
   visit(visit: Visitor): literal { return visit.Assign(this); }
 }
 
+class Logic extends Base {
+  left: Base;
+  op: Token;
+  right: Base;
+
+  constructor(left: Base, op: Token, right: Base) {
+    super(op);
+    this.left = left;
+    this.op = op;
+    this.right = right;
+  }
+
+  visit(visit: Visitor): literal { return visit.Logic(this); }
+}
+
 class Binary extends Base {
   left: Base;
   op: Token;
@@ -76,4 +91,4 @@ class Grouping extends Base {
   visit(visit: Visitor): literal { return visit.Grouping(this); }
 }
 
-export { Literal, Assign, Binary, Unary, Variable, Grouping };
+export { Literal, Assign, Logic, Binary, Unary, Variable, Grouping };

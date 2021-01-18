@@ -4,13 +4,20 @@ decl => varDecl | stmt
 
 varDecl => ( "var" | "final" ) IDENTIFIER ( "=" expression )? ";"
 
-stmt => exprStmt | exitStmt
+stmt => exprStmt | ifStmt | whileStmt | forStmt | exitStmt | block
 
-exprStmt = expression ";"
-exitStmt = "exit" expression? ";"
+exprStmt => expression ";"
+ifStmt => "if" "(" expression ")" stmt ( "else" stmt )?
+whileStmt => "while" "(" expression ")" stmt
+forStmt => "for" "(" ( varDecl | exprStmt | ";" ) expression? expression? ")" stmt
+exitStmt => "exit" expression? ";"
+block => "{" decl* "}"
 
 expression => assignment
-assignment => IDENTIFIER "=" assignment | equality
+assignment => IDENTIFIER "=" assignment | logic_or
+
+logic_or => logic_and ( "or" logic_and )*
+logic_and => equality ( "and" equality )*
 
 equality => comparison ( ( "!=" | "==" ) comparison )*
 comparison => addition ( ( ">" | ">=" | "<" | "<=" ) addition )*

@@ -105,8 +105,8 @@ class Lexer {
           case '!': this.match('=') ? this.append(TType.BANG_EQ) : this.append(TType.BANG); break;
           case '=': this.match('=') ? this.append(TType.EQ_EQ) : this.append(TType.EQ); break;
 
-          case '>': this.match('=') ? this.append(TType.GREATER_EQ) : this.append(TType.LESS_EQ); break;
-          case '<': this.match('=') ? this.append(TType.LESS_EQ) : this.append(TType.GREATER_EQ); break;
+          case '>': this.match('=') ? this.append(TType.GREATER_EQ) : this.append(TType.GREATER); break;
+          case '<': this.match('=') ? this.append(TType.LESS_EQ) : this.append(TType.LESS); break;
 
           case '%':
             if (this.match('%')) {

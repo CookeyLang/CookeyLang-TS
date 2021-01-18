@@ -23,10 +23,23 @@ class Interpreter extends Visitor {
       for (const tree of this.trees) {
         tree.visit(this);
       }
-    } catch(e) {
+    } catch (e) {
       if (e instanceof CookeyError) {
         console.log(`<${e.lineData.file}> [ ${e.lineData.line} : ${e.lineData.col} ] ${e.message}`);
       }
+    }
+  }
+
+  initBlock(stmts: Base[], env: Environment) {
+    let parent = this.environment;
+    try {
+      this.environment = env;
+
+      for (const stmt of stmts) {
+        stmt.visit(this);
+      }
+    } finally {
+      this.environment = parent;
     }
   }
 
@@ -35,7 +48,7 @@ class Interpreter extends Visitor {
     let value: literal = null;
     if (self.value) value = self.value.visit(this);
 
-    this.environment.define(self.name, value);
+    this.environment.define(self.mut, self.name, value);
 
     return null;
   }
@@ -45,9 +58,27 @@ class Interpreter extends Visitor {
     return null;
   }
 
+  IfStmt(self: Stmt.IfStmt): literal {
+    if (self.condition.visit(this) == true) self.thenBr.visit(this);
+    else if (self.elseBr) self.elseBr.visit(this);
+    return null;
+  }
+
+  WhileStmt(self: Stmt.WhileStmt): literal {
+    while (this.isTrue(self.condition.visit(this))) {
+      self.body.visit(this);
+    }
+    return null;
+  }
+
   ExitStmt(self: Stmt.ExitStmt) {
     let exitCode = self.exit.visit(this);
     console.log(exitCode); // for now
+    return null;
+  }
+
+  Block(self: Stmt.Block) {
+    this.initBlock(self.stmts, new Environment(this.environment));
     return null;
   }
 
@@ -62,28 +93,37 @@ class Interpreter extends Visitor {
     return value;
   }
 
+  Logic(self: Expr.Logic): literal {
+    let left = self.left.visit(this);
+
+    if (self.op.type == TType.OR) {
+      if (this.isTrue(left)) return left;
+    } else {
+      if (!this.isTrue(left)) return left;
+    }
+
+    return self.right.visit(this);
+  }
+
   Binary(self: Expr.Binary): literal {
     let left: literal = self.left.visit(this);
     let right: literal = self.right.visit(this);
 
     switch (self.op.type) {
-      case TType.PLUS:
-        return Number(left) + Number(right);
-
-      case TType.MINUS:
-        return Number(left) - Number(right);
-
-      case TType.TIMES:
-        return Number(left) * Number(right);
-
-      case TType.DIVIDE:
-        return Number(left) / Number(right);
+      case TType.PLUS: return Number(left) + Number(right);
+      case TType.MINUS: return Number(left) - Number(right);
+      case TType.TIMES: return Number(left) * Number(right);
+      case TType.DIVIDE: return Number(left) / Number(right);
+      case TType.MODULO: return Number(left) % Number(right);
+      case TType.POWER: return Number(left) ** Number(right);
       
-      case TType.MODULO:
-        return Number(left) % Number(right);
-      
-      case TType.POWER:
-        return Number(left) ** Number(right);
+      case TType.GREATER: return Number(left) > Number(right);
+      case TType.GREATER_EQ: return Number(left) >= Number(right);
+      case TType.LESS: return Number(left) < Number(right);
+      case TType.LESS_EQ: return Number(left) <= Number(right);
+
+      case TType.EQ_EQ: return this.isEqual(left, right);
+      case TType.BANG_EQ: return !this.isEqual(left, right);
     }
 
     return 0;
@@ -95,20 +135,34 @@ class Interpreter extends Visitor {
     switch (self.op.type) {
       case TType.MINUS:
         return -right!;
-    
+
       case TType.BANG:
-        return !right!;
+        return !this.isTrue(right);
     }
 
     return false;
   }
 
   Variable(self: Expr.Variable): literal {
-    return this.environment.get(self.name) as literal;
+    return this.environment.get(self.name)!.val as literal;
   }
 
   Grouping(self: Expr.Grouping): literal {
     return self.value.visit(this);
+  }
+
+
+  private isTrue(val: literal) {
+    if (val == null) return false;
+    if (typeof val == "boolean") return val;
+    return true;
+  }
+
+  private isEqual(a: literal, b: literal) {
+    if (a == null && b == null) return true;
+    if (a == null) return false;
+
+    return a == b;
   }
 }
 
