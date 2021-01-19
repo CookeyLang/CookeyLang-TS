@@ -2,6 +2,21 @@ import { Base } from "./base";
 import { Token } from "../token";
 import { Visitor } from "./visitor";
 
+class FuncDecl extends Base {
+  name: Token;
+  params: Token[];
+  body: Base[];
+
+  constructor(name: Token, params: Token[], body: Base[]) {
+    super(name);
+    this.name = name;
+    this.params = params;
+    this.body = body;
+  }
+
+  visit(visit: Visitor): literal { return visit.FuncDecl(this); }
+}
+
 class VarDecl extends Base {
   mut: Token;
   name: Token;
@@ -79,4 +94,4 @@ class Block extends Base {
   visit(visit: Visitor): literal { return visit.Block(this); }
 }
 
-export { VarDecl, ExprStmt, IfStmt, WhileStmt, ExitStmt, Block };
+export { FuncDecl, VarDecl, ExprStmt, IfStmt, WhileStmt, ExitStmt, Block };

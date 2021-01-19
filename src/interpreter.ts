@@ -1,4 +1,4 @@
-import { defualtToken, identifierToken, TType } from "./token";
+import { defualtToken, identifierToken, Token, TType } from "./token";
 import { Base } from "./expr/base";
 import { Visitor } from "./expr/visitor";
 import * as Stmt from "./expr/stmt";
@@ -7,12 +7,12 @@ import * as Expr from "./expr/expr";
 import { Environment } from "./environment";
 
 import { CookeyError } from "./errors";
-import { FuncCallable } from "./callable";
+import { FuncCallable, UserCallable } from "./functions";
 
 
 class Interpreter extends Visitor {
   trees: Base[];
-  private globals: Environment = new Environment(); // native functions and variables
+  public globals: Environment = new Environment(); // native functions and variables
   private environment: Environment; // user-defined things
 
   constructor(trees: Base[]) {
@@ -50,6 +50,11 @@ class Interpreter extends Visitor {
     }
   }
 
+  FuncDecl(self: Stmt.FuncDecl): literal {
+    let func = new UserCallable(self);
+    this.environment.define(new Token(0, 0, "<native>", TType.VAR, "var"), self.name, func);
+    return null;
+  }
 
   VarDecl(self: Stmt.VarDecl): literal {
     let value: literal = null;

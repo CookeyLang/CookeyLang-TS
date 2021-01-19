@@ -13,6 +13,7 @@ This means every Base will call Visitor implementation with their data, namely `
 However, the entry point is actually the Visitor itself, which will call Base with `self`.
 */
 class Visitor {
+  FuncDecl(_: Stmt.FuncDecl): literal { return 1; }
   VarDecl(_: Stmt.VarDecl): literal { return 1; }
   ExprStmt(_: Stmt.ExprStmt): literal { return 1; }
   IfStmt(_: Stmt.IfStmt): literal { return 1; }

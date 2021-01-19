@@ -1,2 +1,8 @@
-printLine("this must be an older version");
-printLine(NaV);
+function greetMe(name) {
+  printLine("Hello, " + name + "!");
+}
+
+function greetMePog(name) printLine("Hey " + name + " :smirk:");
+
+greetMe("Coder100");
+greetMePog("CookeyLang");

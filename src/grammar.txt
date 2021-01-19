@@ -1,10 +1,13 @@
 arguments => expression ( "," expression )*
+parameters => IDENTIFIER ( "," IDENTIFIER )*
+function => IDENTIFIER "(" parameters? ")" stmt
 
 
 program => decl* EOF
 
-decl => varDecl | stmt
+decl => funcDecl | varDecl | stmt
 
+funcDecl => "function" function
 varDecl => ( "var" | "final" ) IDENTIFIER ( "=" expression )? ";"
 
 stmt => exprStmt | ifStmt | whileStmt | doWhileStmt | forStmt | exitStmt | block

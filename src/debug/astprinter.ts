@@ -22,6 +22,12 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
   }
 
   
+  FuncDecl(self: Stmt.FuncDecl): string {
+    return `function ${self.name.value}(${self.params.map(p => p.value).join(", ")}) {
+${self.body.map(stmt => stmt.visit(this)).join("\n---\n")}
+}`;
+  }
+
   VarDecl(self: Stmt.VarDecl): string {
     return `${TType[self.mut.type]} ${self.name.value} = ${self.value.visit(this)};`;
   }
@@ -61,6 +67,10 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
 
   Binary(self: Expr.Binary): string {
     return `(${TType[self.op.type]} ${self.left.visit(this)} ${self.right.visit(this)})`;
+  }
+
+  Call(self: Expr.Call): string {
+    return `${self.callee.visit(this)}(${self.args.map(a => a.visit(this)).join(", ")})`;
   }
 
   Unary(self: Expr.Unary): string {

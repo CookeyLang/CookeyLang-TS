@@ -28,9 +28,33 @@ class Parser {
 
 
   private decl() {
+    if (this.match(TType.FUNCTION)) return this.funcDecl("function");
     if (this.match(TType.VAR, TType.FINAL)) return this.varDecl();
 
     return this.stmt();
+  }
+
+  private funcDecl(type: string) { // methods are functions too
+    let name = this.consume(TType.IDENTIFIER, `Expected ${type} name.`)!;
+
+    this.consume(TType.LEFT_PAREN, `Expected '(' after ${type} name.`);
+    let params: Token[] = [];
+    if (this.peek().type != TType.RIGHT_PAREN) {
+      do {
+        params.push(this.consume(TType.IDENTIFIER, "Expected parameter name.")!);
+      } while (this.match(TType.COMMA));
+    }
+    this.consume(TType.RIGHT_PAREN, "Expected ')' after parameters.");
+
+    let body: Base[];
+
+    if (this.match(TType.LEFT_BRACE)) {
+      body = this.block();
+    } else {
+      body = [this.stmt()];
+    }
+
+    return new Stmt.FuncDecl(name, params, body);
   }
 
   private varDecl() {
@@ -94,7 +118,7 @@ class Parser {
     this.consume(TType.RIGHT_PAREN, "Expected ')' after expression.");
     this.consume(TType.SEMI, "Expected ';' after ')'");
 
-    return new Stmt.Block([ body, new Stmt.WhileStmt(condition, body) ]);
+    return new Stmt.Block([body, new Stmt.WhileStmt(condition, body)]);
   }
 
   private forStmt(): Base {
@@ -265,7 +289,7 @@ class Parser {
 
   private call() {
     let expr = this.primary();
-    
+
     while (true) {
       if (this.match(TType.LEFT_PAREN)) {
         expr = this.finishCall(expr);
