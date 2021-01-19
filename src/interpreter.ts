@@ -20,9 +20,9 @@ class Interpreter extends Visitor {
     this.trees = trees;
     this.environment = this.globals;
 
-    this.globals.define(defualtToken, identifierToken("printLine"), new FuncCallable(1, (_, args) => {
-      console.log(args[0]);
-    }, () => "<Native Function>"));
+    this.globals.define(defualtToken, identifierToken("printLine"), new FuncCallable(1, (_, args) => console.log(this.stringify(args[0])), () => "<Native Function>"));
+    this.globals.define(defualtToken, identifierToken("print"), new FuncCallable(1, (_, args) => process.stdout.write(this.stringify(args[0])), () => "<Native Function>"));
+    this.globals.define(defualtToken, identifierToken("clearConsole"), new FuncCallable(0, () => console.clear(), () => "<Native Function>"));
   }
 
   init() {
@@ -182,6 +182,11 @@ class Interpreter extends Visitor {
     if (a == null) return false;
 
     return a == b;
+  }
+
+  private stringify(str: string) {
+    if (str == null) return "NaV";
+    return str.toString();
   }
 }
 
