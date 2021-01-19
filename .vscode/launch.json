@@ -14,7 +14,7 @@
         "${workspaceFolder}/dist/**/*.js"
       ],
       "args": [
-        "./test/interpreter/loops.clf"
+        "./test/interpreter/functions.clf"
       ]
     }
   ]

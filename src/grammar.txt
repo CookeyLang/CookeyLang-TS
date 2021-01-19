@@ -1,3 +1,6 @@
+arguments => expression ( "," expression )*
+
+
 program => decl* EOF
 
 decl => varDecl | stmt
@@ -27,6 +30,7 @@ addition => multiplication ( ( "+" | "-" ) multiplication )*
 multiplication => power ( ( "*" | "/" | "%" ) power )*
 power => unary ( "^" unary )*
 
-unary => ( "!" | "-" ) unary | primary
+unary => ( "!" | "-" ) unary | call
+call => primary ( "(" arguments? ")" )*
 
 primary => NUMBER | STRING | "(" expression ")" | IDENTIFIER

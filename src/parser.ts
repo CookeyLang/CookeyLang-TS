@@ -260,7 +260,34 @@ class Parser {
       return new Expr.Unary(op, right);
     }
 
-    return this.primary();
+    return this.call();
+  }
+
+  private call() {
+    let expr = this.primary();
+    
+    while (true) {
+      if (this.match(TType.LEFT_PAREN)) {
+        expr = this.finishCall(expr);
+      } else {
+        break;
+      }
+    }
+
+    return expr;
+  }
+
+  private finishCall(callee: Base) {
+    let args = [];
+    if (this.peek().type != TType.RIGHT_PAREN) {
+      do {
+        args.push(this.expression());
+      } while (this.match(TType.COMMA));
+    }
+
+    let paren = this.consume(TType.RIGHT_PAREN, "Expected ')' after arguments.")!;
+
+    return new Expr.Call(callee, paren, args);
   }
 
   private primary(): Base {
@@ -286,12 +313,12 @@ class Parser {
 
 
   private isValid() {
-    return this.i < this.tokens.length && this.tokens[this.i].type != TType.END;
+    return this.i < this.tokens.length && this.peek().type != TType.END;
   }
 
   private match(...tokens: TType[]) {
     for (const token of tokens) {
-      if (this.isValid() && this.tokens[this.i].type == token) {
+      if (this.isValid() && this.peek().type == token) {
         this.advance();
         return true;
       }

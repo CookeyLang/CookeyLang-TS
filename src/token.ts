@@ -41,6 +41,9 @@ class Token {
   constructor(line: number, col: number, file: string, type: TType, value: literal) {
     this.line = line, this.col = col, this.file = file, this.type = type, this.value = value;
   }
-};
+}
 
-export { Token, TType };
+const defualtToken = new Token(0, 0, "<native>", TType.FINAL, ""); // so we don't have to write out debugging symbols
+function identifierToken(name: string) { return new Token(0, 0, "<native>", TType.IDENTIFIER, name); }
+
+export { Token, TType, defualtToken, identifierToken };

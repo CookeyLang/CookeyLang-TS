@@ -1,21 +1,28 @@
+import { defualtToken, identifierToken, TType } from "./token";
 import { Base } from "./expr/base";
+import { Visitor } from "./expr/visitor";
 import * as Stmt from "./expr/stmt";
 import * as Expr from "./expr/expr";
 
-import { Visitor } from "./expr/visitor";
-
-import { TType } from "./token";
 import { Environment } from "./environment";
+
 import { CookeyError } from "./errors";
+import { FuncCallable } from "./callable";
 
 
 class Interpreter extends Visitor {
   trees: Base[];
-  private environment = new Environment();
+  private globals: Environment = new Environment(); // native functions and variables
+  private environment: Environment; // user-defined things
 
   constructor(trees: Base[]) {
     super();
     this.trees = trees;
+    this.environment = this.globals;
+
+    this.globals.define(defualtToken, identifierToken("printLine"), new FuncCallable(1, (_, args) => {
+      console.log(args[0]);
+    }, () => "<Native Function>"));
   }
 
   init() {
@@ -127,6 +134,18 @@ class Interpreter extends Visitor {
     }
 
     return 0;
+  }
+
+  Call(self: Expr.Call): literal {
+    let callee = self.callee.visit(this);
+
+    let args = [];
+    for (const arg of self.args) {
+      args.push(arg.visit(this));
+    }
+
+    let func: FuncCallable = callee;
+    func.call(this, args);
   }
 
   Unary(self: Expr.Unary): literal {

@@ -45,15 +45,30 @@ class Binary extends Base {
   left: Base;
   op: Token;
   right: Base;
-
+  
   constructor(left: Base, op: Token, right: Base) {
     super(op);
     this.left = left;
     this.op = op;
     this.right = right;
   }
-
+  
   visit(visit: Visitor): literal { return visit.Binary(this); }
+}
+
+class Call extends Base {
+  callee: Base;
+  paren: Token;
+  args: Base[];
+
+  constructor(callee: Base, paren: Token, args: Base[]) {
+    super(paren);
+    this.callee = callee;
+    this.paren = paren;
+    this.args = args;
+  }
+
+  visit(visit: Visitor): literal { return visit.Call(this); }
 }
 
 class Unary extends Base {
@@ -91,4 +106,4 @@ class Grouping extends Base {
   visit(visit: Visitor): literal { return visit.Grouping(this); }
 }
 
-export { Literal, Assign, Logic, Binary, Unary, Variable, Grouping };
+export { Literal, Assign, Logic, Binary, Call, Unary, Variable, Grouping };
