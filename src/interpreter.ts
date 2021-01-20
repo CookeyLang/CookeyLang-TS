@@ -85,7 +85,7 @@ class Interpreter extends Visitor {
 
   ExitStmt(self: Stmt.ExitStmt) {
     let exitCode = self.exit.visit(this);
-    console.log(exitCode); // for now
+    process.exit(1);
     return null;
   }
 

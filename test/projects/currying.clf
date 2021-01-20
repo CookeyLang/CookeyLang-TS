@@ -6,3 +6,13 @@ function add3(a) {
 ret _; }
 
 printLine(add3(1)(2)(3));
+
+var addto3 = add3(1)(2);
+printLine(addto3(5));
+
+function infinitePrint(text) {
+  printLine(text);
+  ret infinitePrint;
+}
+
+infinitePrint("hi")("hello")("lol")("currying")("rocks")("but it")("kinda looks weird");

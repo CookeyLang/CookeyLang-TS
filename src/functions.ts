@@ -42,7 +42,7 @@ class UserCallable extends FuncCallable {
       } catch (ret) {
         if (ret instanceof CookeyRet) {
           return ret.value;
-        }
+        } else throw ret; // prevent it from silently being ignored
       }
 
       return null;
