@@ -4,5 +4,8 @@ function greetMe(name) {
 
 function greetMePog(name) printLine("Hey " + name + " :smirk:");
 
+function add(a, b) ret a + b;
+
 greetMe("Coder100");
 greetMePog("CookeyLang");
+printLine(add(1, 3));

@@ -13,4 +13,14 @@ class CookeyError extends Error {
   }
 }
 
-export { CookeyError };
+class CookeyRet extends Error {
+  value: literal;
+
+  constructor(value: literal) {
+    super();
+    this.value = value;
+  }
+}
+
+
+export { CookeyError, CookeyRet };

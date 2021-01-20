@@ -19,6 +19,7 @@ class Visitor {
   IfStmt(_: Stmt.IfStmt): literal { return 1; }
   WhileStmt(_: Stmt.WhileStmt): literal { return 1; }
   ExitStmt(_: Stmt.ExitStmt): literal { return 1; }
+  RetStmt(_: Stmt.RetStmt): literal { return 1; }
   Block(_: Stmt.Block): literal { return 1; }
 
   Literal(_: Expr.Literal): literal { return 1; }

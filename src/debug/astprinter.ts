@@ -48,6 +48,10 @@ ${self.body.map(stmt => stmt.visit(this)).join("\n---\n")}
     return `(exit ${self.exit.visit(this)})`;
   }
 
+  RetStmt(self: Stmt.RetStmt): string {
+    return `ret ${self.value.visit(this)};`;
+  }
+
   Block(self: Stmt.Block): string {
     return `{\n${self.stmts.map(stmt => stmt.visit(this)).join("\n---\n")}\n}`;
   }
@@ -70,7 +74,7 @@ ${self.body.map(stmt => stmt.visit(this)).join("\n---\n")}
   }
 
   Call(self: Expr.Call): string {
-    return `${self.callee.visit(this)}(${self.args.map(a => a.visit(this)).join(", ")})`;
+    return `${self.callee.visit(this)} ${self.args.map(a => a.visit(this)).join(", ")}`;
   }
 
   Unary(self: Expr.Unary): string {

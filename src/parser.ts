@@ -76,6 +76,7 @@ class Parser {
     if (this.match(TType.DO)) return this.doWhileStmt();
     if (this.match(TType.FOR)) return this.forStmt();
     if (this.match(TType.EXIT)) return this.exitStmt();
+    if (this.match(TType.RET)) return this.retStmt();
     if (this.match(TType.LEFT_BRACE)) return new Stmt.Block(this.block());
 
     return this.exprStmt();
@@ -158,6 +159,18 @@ class Parser {
 
     this.consume(TType.SEMI, "Expected ';' after exit.");
     return new Stmt.ExitStmt(num);
+  }
+
+  private retStmt() {
+    let ret = this.previous();
+    let value: Base = new Expr.Literal(ret, null);
+
+    if (this.peek().type != TType.SEMI) {
+      value = this.expression();
+    }
+
+    this.consume(TType.SEMI, "Expected ';' after ret statement.");
+    return new Stmt.RetStmt(ret, value);
   }
 
   private block() {

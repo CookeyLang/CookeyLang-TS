@@ -58,13 +58,11 @@ class Binary extends Base {
 
 class Call extends Base {
   callee: Base;
-  paren: Token;
   args: Base[];
 
   constructor(callee: Base, paren: Token, args: Base[]) {
     super(paren);
     this.callee = callee;
-    this.paren = paren;
     this.args = args;
   }
 

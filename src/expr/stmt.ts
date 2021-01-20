@@ -83,6 +83,17 @@ class ExitStmt extends Base {
   visit(visit: Visitor): literal { return visit.ExitStmt(this); }
 }
 
+class RetStmt extends Base {
+  value: Base;
+
+  constructor(ret: Token, value: Base) {
+    super(ret);
+    this.value = value;
+  }
+
+  visit(visit: Visitor): literal { return visit.RetStmt(this); }
+}
+
 class Block extends Base {
   stmts: Base[];
 
@@ -94,4 +105,4 @@ class Block extends Base {
   visit(visit: Visitor): literal { return visit.Block(this); }
 }
 
-export { FuncDecl, VarDecl, ExprStmt, IfStmt, WhileStmt, ExitStmt, Block };
+export { FuncDecl, VarDecl, ExprStmt, IfStmt, WhileStmt, ExitStmt, RetStmt, Block };

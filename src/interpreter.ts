@@ -6,7 +6,7 @@ import * as Expr from "./expr/expr";
 
 import { Environment } from "./environment";
 
-import { CookeyError } from "./errors";
+import { CookeyError, CookeyRet } from "./errors";
 import { FuncCallable, UserCallable } from "./functions";
 
 
@@ -89,6 +89,11 @@ class Interpreter extends Visitor {
     return null;
   }
 
+  RetStmt(self: Stmt.RetStmt) {
+    let value = self.value.visit(this);
+    throw new CookeyRet(value);
+  }
+
   Block(self: Stmt.Block) {
     this.initBlock(self.stmts, new Environment(this.environment));
     return null;
@@ -122,17 +127,38 @@ class Interpreter extends Visitor {
     let right: literal = self.right.visit(this);
 
     switch (self.op.type) {
-      case TType.PLUS: return Number(left) + Number(right);
-      case TType.MINUS: return Number(left) - Number(right);
-      case TType.TIMES: return Number(left) * Number(right);
-      case TType.DIVIDE: return Number(left) / Number(right);
-      case TType.MODULO: return Number(left) % Number(right);
-      case TType.POWER: return Number(left) ** Number(right);
-      
-      case TType.GREATER: return Number(left) > Number(right);
-      case TType.GREATER_EQ: return Number(left) >= Number(right);
-      case TType.LESS: return Number(left) < Number(right);
-      case TType.LESS_EQ: return Number(left) <= Number(right);
+      case TType.PLUS:
+        if (typeof left == "number" && typeof right == "number") return left + right;
+        if (typeof left == "string" && typeof right == "string") return left + right;
+        throw new CookeyError(self.lineData, "Only number addition or string concatenation is allowed for the '+' operator.");
+      case TType.MINUS:
+        if (typeof left == "number" && typeof right == "number") return left - right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '-' operator.");
+      case TType.TIMES:
+        if (typeof left == "number" && typeof right == "number") return left * right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '*' operator.");
+      case TType.DIVIDE:
+        if (typeof left == "number" && typeof right == "number") return left / right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '/' operator.");
+      case TType.MODULO:
+        if (typeof left == "number" && typeof right == "number") return left % right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '%' operator.");
+      case TType.POWER:
+        if (typeof left == "number" && typeof right == "number") return left ** right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '^' operator.");
+
+      case TType.GREATER:
+        if (typeof left == "number" && typeof right == "number") return left > right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '>' operator.");
+      case TType.GREATER_EQ:
+        if (typeof left == "number" && typeof right == "number") return left >= right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '>=' operator.");
+      case TType.LESS:
+        if (typeof left == "number" && typeof right == "number") return left < right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '<' operator.");
+      case TType.LESS_EQ:
+        if (typeof left == "number" && typeof right == "number") return left <= right;
+        throw new CookeyError(self.lineData, "Only numbers are allowed for the '<=' operator.");
 
       case TType.EQ_EQ: return this.isEqual(left, right);
       case TType.BANG_EQ: return !this.isEqual(left, right);
@@ -150,7 +176,10 @@ class Interpreter extends Visitor {
     }
 
     let func: FuncCallable = callee;
-    func.call(this, args);
+
+    if (!(func instanceof FuncCallable)) throw new CookeyError(self.lineData, "Only functions and classes can be called.");
+    
+    return func.call(this, args);
   }
 
   Unary(self: Expr.Unary): literal {
@@ -158,7 +187,8 @@ class Interpreter extends Visitor {
 
     switch (self.op.type) {
       case TType.MINUS:
-        return -right!;
+        if (typeof right == "number") return -right;
+        throw new CookeyError(self.lineData, "Only numbers can be negated.");
 
       case TType.BANG:
         return !this.isTrue(right);

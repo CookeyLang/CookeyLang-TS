@@ -1,7 +1,10 @@
 import { Interpreter } from "./interpreter";
 import { Environment } from "./environment";
 import { defualtToken } from "./token";
+import { CookeyRet } from "./errors";
+
 import * as Stmt from "./expr/stmt";
+
 
 class FuncCallable {
   arity: number;
@@ -30,8 +33,16 @@ class UserCallable extends FuncCallable {
       for (let i = 0; i < this.decl.params.length; i++) {
         env.define(defualtToken, this.decl.params[i], args[i]);
       }
-  
-      interpreter.initBlock(this.decl.body, env);
+      
+      try {
+        interpreter.initBlock(this.decl.body, env);
+      } catch (ret) {
+        if (ret instanceof CookeyRet) {
+          return ret.value;
+        }
+      }
+
+      return null;
     }
   }
 }
