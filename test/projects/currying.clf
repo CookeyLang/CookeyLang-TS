@@ -1,0 +1,8 @@
+%% soon this won't look so bad lol
+function add3(a) {
+  function _(b) {
+    function _1(c) ret a + b + c;
+  ret _1; }
+ret _; }
+
+printLine(add3(1)(2)(3));

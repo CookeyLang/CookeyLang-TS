@@ -51,7 +51,7 @@ class Interpreter extends Visitor {
   }
 
   FuncDecl(self: Stmt.FuncDecl): literal {
-    let func = new UserCallable(self);
+    let func = new UserCallable(self, this.environment);
     this.environment.define(new Token(0, 0, "<native>", TType.VAR, "var"), self.name, func);
     return null;
   }

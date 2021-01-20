@@ -20,15 +20,18 @@ class FuncCallable {
 
 class UserCallable extends FuncCallable {
   private decl: Stmt.FuncDecl;
+  private closure: Environment;
 
-  constructor(decl: Stmt.FuncDecl) {
+  constructor(decl: Stmt.FuncDecl, closure: Environment) {
     super(0, () => {}, () => `<function ${this.decl.name.value}>`);
     
     this.decl = decl;
     this.arity = this.decl.params.length;
+
+    this.closure = closure;
     
     this.call = (interpreter: Interpreter, args: literal[]) => {
-      let env = new Environment(interpreter.globals);
+      let env = new Environment(this.closure);
       // define arguments/parameters
       for (let i = 0; i < this.decl.params.length; i++) {
         env.define(defualtToken, this.decl.params[i], args[i]);
