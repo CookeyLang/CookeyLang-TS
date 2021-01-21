@@ -1,0 +1,14 @@
+var a = 0;
+
+{
+  function whatsA() {
+    printLine(a);
+  }
+
+  whatsA();
+  var a = 1;
+  whatsA();
+
+  %% Ideally, because of closures, it should print 0 twice.
+  %% Let's see if it does that!
+}

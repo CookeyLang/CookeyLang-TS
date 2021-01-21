@@ -4,6 +4,7 @@ import * as readline from "readline";
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
 import { Interpreter } from "./interpreter";
+import { Resolver } from "./resolver";
 
 import { AstPrinter } from "./debug/astprinter";
 import { tokenPrinter } from "./debug/tokprinter";
@@ -21,6 +22,9 @@ async function interpretText(code: string, file: string) {
   if (psr.hasError) return;
 
   const ipt = new Interpreter(tree);
+  const resolver = new Resolver(ipt);
+  resolver.init(tree);
+
   let result = ipt.init();
 
   console.log(result);
@@ -45,6 +49,9 @@ async function interpretDebug(file: string) {
   console.log(astprnt.init());
 
   const ipt = new Interpreter(trees);
+  const resolver = new Resolver(ipt);
+  resolver.init(trees);
+
   let result = ipt.init();
 
   return result;

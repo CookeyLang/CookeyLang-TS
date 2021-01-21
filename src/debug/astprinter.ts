@@ -74,7 +74,7 @@ ${self.body.map(stmt => stmt.visit(this)).join("\n---\n")}
   }
 
   Call(self: Expr.Call): string {
-    return `(${self.callee.visit(this)} ${self.args.map(a => a.visit(this)).join(", ")})`;
+    return `${self.callee.visit(this)}(${self.args.map(a => a.visit(this)).join(", ")})`;
   }
 
   Unary(self: Expr.Unary): string {

@@ -31,6 +31,10 @@ class Environment {
     throw new CookeyError(name, `Undefined variable ${name.value}.`);
   }
 
+  getAt(distance: number, name: string): { mut: TType.FINAL | TType.VAR, val: literal } | undefined {
+    return this.baseEnv(distance).values.get(name);
+  }
+
   getMut(name: Token): TType.VAR | TType.FINAL {
     if (this.values.has(name.value as string)) return this.values.get(name.value as string)!.mut;
     // We don't need to get the mutability in the parent
@@ -54,6 +58,23 @@ class Environment {
     }
 
     throw new CookeyError(name, `Undefined variable ${name.value}.`);
+  }
+
+  assignAt(distance: number, name: Token, val: literal) {
+    let env = this.baseEnv(distance);
+    let mut = env.values.get(name.value)!.mut;
+    this.baseEnv(distance).values.set(name.value, { mut, val });
+  }
+
+
+  // gets the environment that far away
+  private baseEnv(distance: number) {
+    let env: Environment = this;
+    for (let i = 0; i < distance; i++) {
+      env = env.parent!;
+    }
+
+    return env;
   }
 }
 

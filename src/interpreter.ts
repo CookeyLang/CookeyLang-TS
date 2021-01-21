@@ -15,6 +15,9 @@ class Interpreter extends Visitor {
   public globals: Environment = new Environment(); // native functions and variables
   private environment: Environment; // user-defined things
 
+  // variable: scopes between variable and definiton
+  private locals: Map<Base, number> = new Map();
+
   constructor(trees: Base[]) {
     super();
     this.trees = trees;
@@ -50,6 +53,11 @@ class Interpreter extends Visitor {
     }
   }
 
+  resolve(expr: Base, depth: number) {
+    this.locals.set(expr, depth);
+  }
+
+  
   FuncDecl(self: Stmt.FuncDecl): literal {
     let func = new UserCallable(self, this.environment);
     this.environment.define(new Token(0, 0, "<native>", TType.VAR, "var"), self.name, func);
@@ -106,7 +114,10 @@ class Interpreter extends Visitor {
 
   Assign(self: Expr.Assign): literal {
     let value = self.value.visit(this);
-    this.environment.assign(self.name, value);
+
+    let distance = this.locals.get(self);
+    if (distance) this.environment.assignAt(distance, self.name, self.value);
+    else this.environment.assign(self.name, value);
     return value;
   }
 
@@ -198,13 +209,19 @@ class Interpreter extends Visitor {
   }
 
   Variable(self: Expr.Variable): literal {
-    return this.environment.get(self.name)!.val as literal;
+    return this.findVar(self.name, self);
   }
 
   Grouping(self: Expr.Grouping): literal {
     return self.value.visit(this);
   }
 
+
+  private findVar(name: Token, expr: Base) {
+    let distance = this.locals.get(expr);
+    if (distance != null) return this.environment.getAt(distance, name.value)!.val; // guaranteed to have
+    else return this.globals.get(name)!.val; // maybe have
+  }
 
   private isTrue(val: literal) {
     if (val == null) return false;
