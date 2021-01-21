@@ -10,56 +10,37 @@ import { AstPrinter } from "./debug/astprinter";
 import { tokenPrinter } from "./debug/tokprinter";
 
 
-async function interpretText(code: string, file: string) {
+async function interpretText(code: string, file: string, debug = false) {
   const lex = new Lexer(code, file);
   const tokens = lex.init();
 
   if (lex.hasError) return;
+  if (debug) console.log(tokenPrinter(tokens));
 
-  const psr = new Parser(tokens, file);
-  const tree = psr.init();
+  const parser = new Parser(tokens, file);
+  const trees = parser.init();
 
-  if (psr.hasError) return;
+  if (parser.hasError) return;
+  if (debug) {
+    const astprnt = new AstPrinter(trees);
+    console.log(astprnt.init());
+  }
 
-  const ipt = new Interpreter(tree);
-  const resolver = new Resolver(ipt);
-  resolver.init(tree);
+  const interpreter = new Interpreter(trees);
+  const resolver = new Resolver(interpreter);
 
-  let result = ipt.init();
+  resolver.init(trees);
+  if (resolver.hasError) return;
 
+  let result = interpreter.init();
   console.log(result);
 
   return result;
 }
 
-async function interpretDebug(file: string) {
+async function interpretFile(file: string, debug = false) {
   const code = await fs.readFile(file, "utf-8");
-
-  const lex = new Lexer(code, file);
-  const tokens = lex.init();
-
-  if (lex.hasError) return;
-  console.log(tokenPrinter(tokens));
-
-  const psr = new Parser(tokens, file);
-  const trees = psr.init();
-
-  if (psr.hasError) return;
-  const astprnt = new AstPrinter(trees);
-  console.log(astprnt.init());
-
-  const ipt = new Interpreter(trees);
-  const resolver = new Resolver(ipt);
-  resolver.init(trees);
-
-  let result = ipt.init();
-
-  return result;
-}
-
-async function interpretFile(file: string) {
-  const code = await fs.readFile(file, "utf-8");
-  return interpretText(code, file);
+  return interpretText(code, file, debug);
 }
 
 function repl() {
@@ -86,4 +67,4 @@ function repl() {
   });
 }
 
-export { interpretText, interpretDebug, interpretFile, repl };
+export { interpretText, interpretFile, repl };

@@ -13,6 +13,7 @@ class Resolver extends Visitor {
   private interpreter: Interpreter;
   // name: is it defined
   private scopes: Map<string, boolean>[] = [];
+  hasError = false;
 
   constructor(interpreter: Interpreter) {
     super();
@@ -21,8 +22,15 @@ class Resolver extends Visitor {
   }
 
   init(stmts: Base[]) {
-    for (const stmt of stmts) {
-      stmt.visit(this);
+    try {
+      for (const stmt of stmts) {
+        stmt.visit(this);
+      }
+    } catch (e) {
+      if (e instanceof CookeyError) {
+        console.log(`<${e.lineData.file}> [ ${e.lineData.line} : ${e.lineData.col} ] ${e.message}`);
+        this.hasError = true;
+      }
     }
   }
 
