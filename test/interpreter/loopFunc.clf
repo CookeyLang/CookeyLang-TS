@@ -1,8 +1,10 @@
-function loopFunc() {
+function loopFunc(maxNum) {
   for (var i = 0; i < 10; i = i + 1) {
-    if (i == 3) ret 5;
+    if (i == maxNum) ret 1;
   }
-  printLine("OwO");
+
+  ret 0;
+  printLine("not reached lol");
 }
 
-printLine(loopFunc());
+printLine(loopFunc(9));
