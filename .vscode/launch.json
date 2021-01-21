@@ -14,7 +14,7 @@
         "${workspaceFolder}/dist/**/*.js"
       ],
       "args": [
-        "./test/projects/dumbBug.clf"
+        "./test/interpreter/loopFunc.clf"
       ]
     }
   ]

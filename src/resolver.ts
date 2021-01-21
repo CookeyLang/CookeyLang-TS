@@ -43,9 +43,7 @@ class Resolver extends Visitor {
 
   VarDecl(self: Stmt.VarDecl) {
     this.declare(self.name); // first state it exists
-    if (self.value) {
-      this.resolve([self.value]);
-    }
+    if (self.value) this.resolve([self.value]);
     this.define(self.name); // then give the value
     // so we can remove cases like var a = a;
   }
@@ -110,6 +108,8 @@ class Resolver extends Visitor {
     this.resolve([self.value]);
   }
 
+  Literal(_: Expr.Literal) {}
+
   Logic(self: Expr.Logic) {
     this.resolve([self.left]);
     this.resolve([self.right]);
@@ -141,6 +141,7 @@ class Resolver extends Visitor {
       this.declare(param);
       this.define(param);
     }
+    this.resolve(func.body);
     this.endScope();
   }
 

@@ -93,8 +93,7 @@ class Interpreter extends Visitor {
 
   ExitStmt(self: Stmt.ExitStmt) {
     let exitCode = self.exit.visit(this);
-    process.exit(1);
-    return null;
+    process.exit(exitCode);
   }
 
   RetStmt(self: Stmt.RetStmt) {
@@ -116,7 +115,7 @@ class Interpreter extends Visitor {
     let value = self.value.visit(this);
 
     let distance = this.locals.get(self);
-    if (distance) this.environment.assignAt(distance, self.name, self.value);
+    if (distance != null) this.environment.assignAt(distance, self.name, value);
     else this.environment.assign(self.name, value);
     return value;
   }
