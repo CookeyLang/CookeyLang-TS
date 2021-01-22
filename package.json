@@ -12,7 +12,8 @@
     "postinstall": "node dist/run/welcome"
   },
   "files": [
-    "dist/**/*.js"
+    "dist/**/*.js",
+    "index.d.ts"
   ],
   "repository": {
     "type": "git",

@@ -1,0 +1,20 @@
+var a = 5;
+++a;
+printLine(a); %% 6
+--a;
+printLine(a); %% 5
+printLine(++a); %% 6
+printLine(--a); %% 5
+
+a += 5;
+printLine(a); %% 10
+a -= 5;
+printLine(a); %% 5
+a *= 5;
+printLine(a); %% 25
+a /= 5;
+printLine(a); %% 5
+a ^= 2;
+printLine(a); %% 25
+a %= 2;
+printLine(a); %% 1

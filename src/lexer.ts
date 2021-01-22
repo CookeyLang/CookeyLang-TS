@@ -96,8 +96,8 @@ class Lexer {
           case '?': this.append(TType.QUE); break;
           case ':': this.append(TType.COL); break;
 
-          case '-': this.match('=') ? this.append(TType.MINUS_EQ) : this.append(TType.MINUS); break;
-          case '+': this.match('=') ? this.append(TType.PLUS_EQ) : this.append(TType.PLUS); break;
+          case '+': this.match('=') ? this.append(TType.PLUS_EQ) : this.match('+') ? this.append(TType.PLUS_PLUS) : this.append(TType.PLUS); break;
+          case '-': this.match('=') ? this.append(TType.MINUS_EQ) : this.match('-') ? this.append(TType.MINUS_MINUS) : this.append(TType.MINUS); break;
           case '*': this.match('=') ? this.append(TType.TIMES_EQ) : this.append(TType.TIMES); break;
           case '/': this.match('=') ? this.append(TType.DIVIDE_EQ) : this.append(TType.DIVIDE); break;
           case '^': this.match('=') ? this.append(TType.POWER_EQ) : this.append(TType.POWER); break;

@@ -203,6 +203,21 @@ class Parser {
       this.error("Invalid assignment target.");
     }
 
+    if (this.match(TType.PLUS_EQ, TType.MINUS_EQ, TType.TIMES_EQ, TType.DIVIDE_EQ, TType.POWER_EQ, TType.MODULO_EQ)) {
+      let op = this.previous();
+      switch (op.type) {
+        case TType.PLUS_EQ: op.type = TType.PLUS; break;
+        case TType.MINUS_EQ: op.type = TType.MINUS; break;
+        case TType.TIMES_EQ: op.type = TType.TIMES; break;
+        case TType.DIVIDE_EQ: op.type = TType.DIVIDE; break;
+        case TType.POWER_EQ: op.type = TType.POWER; break;
+        case TType.MODULO_EQ: op.type = TType.MODULO; break;
+      }
+
+      let value = this.assignment();
+      return this.desugarAssign(op, expr, op.type, value)!;
+    }
+
     return expr;
   }
 
@@ -290,11 +305,24 @@ class Parser {
     return expr;
   }
 
-  private unary() {
-    if (this.match(TType.BANG_EQ, TType.MINUS)) {
+  private unary(): Base {
+    if (this.match(TType.BANG_EQ, TType.PLUS, TType.MINUS)) {
       let op: Token = this.previous();
       let right: Base = this.unary();
       return new Expr.Unary(op, right);
+    }
+
+    // desugar
+    if (this.match(TType.PLUS_PLUS)) {
+      let lineData = this.previous();
+      let right = this.unary();
+      return this.desugarAssign(lineData, right, TType.PLUS, 1)!;
+    }
+
+    if (this.match(TType.MINUS_MINUS)) {
+      let lineData = this.previous();
+      let right = this.unary();
+      return this.desugarAssign(lineData, right, TType.MINUS, 1)!;
     }
 
     return this.call();
@@ -416,6 +444,18 @@ class Parser {
 
       this.advance();
     }
+  }
+
+  private desugarAssign(lineData: Token, name: Base, type: TType, value: number | Base) {
+    // x = x (op) v
+    let op = new Token(lineData.line, lineData.col, lineData.file, type, "");
+
+    let val: Expr.Literal;
+    if (!(value instanceof Expr.Literal)) val = new Expr.Literal(lineData, value);
+    else val = value;
+
+    if (name instanceof Expr.Variable) return new Expr.Assign(name.name, new Expr.Binary(name, op, val));
+    this.error("Invalid assignment target.");
   }
 }
 

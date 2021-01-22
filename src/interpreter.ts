@@ -196,12 +196,17 @@ class Interpreter extends Visitor {
     let right = self.right.visit(this);
 
     switch (self.op.type) {
+      case TType.PLUS:
+        if (typeof right == "number") return right;
+        throw new CookeyError(self.lineData, "Unary '+' can only be applied to numbers.");
+
       case TType.MINUS:
         if (typeof right == "number") return -right;
         throw new CookeyError(self.lineData, "Only numbers can be negated.");
 
       case TType.BANG:
         return !this.isTrue(right);
+      
     }
 
     return false;

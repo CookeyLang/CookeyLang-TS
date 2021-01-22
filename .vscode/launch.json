@@ -14,7 +14,7 @@
         "${workspaceFolder}/dist/**/*.js"
       ],
       "args": [
-        "./test/interpreter/loopFunc.clf"
+        "./test/interpreter/sugar.clf"
       ]
     }
   ]
