@@ -18,3 +18,8 @@ a ^= 2;
 printLine(a); %% 25
 a %= 2;
 printLine(a); %% 1
+
+a++;
+printLine(a); %% 2
+a--;
+printLine(a); %% 1

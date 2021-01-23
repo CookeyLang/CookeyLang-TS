@@ -218,6 +218,16 @@ class Parser {
       return this.desugarAssign(op, expr, op.type, value)!;
     }
 
+    if (this.match(TType.PLUS_PLUS, TType.MINUS_MINUS)) {
+      let op = this.previous();
+      switch (op.type) {
+        case TType.PLUS_PLUS: op.type = TType.PLUS; break;
+        case TType.MINUS_MINUS: op.type = TType.MINUS; break;
+      }
+
+      return this.desugarAssign(op, expr, op.type, 1)!;
+    }
+
     return expr;
   }
 
@@ -313,10 +323,17 @@ class Parser {
     }
 
     // desugar
-    if (this.match(TType.PLUS_PLUS)) {
+    if (this.match(TType.PLUS_PLUS, TType.MINUS_MINUS)) {
       let lineData = this.previous();
       let right = this.unary();
-      return this.desugarAssign(lineData, right, TType.PLUS, 1)!;
+
+      let op = lineData.type;
+      switch (op) {
+        case TType.PLUS_PLUS: op = TType.PLUS; break;
+        case TType.MINUS_MINUS: op = TType.MINUS; break;
+      }
+
+      return this.desugarAssign(lineData, right, op, 1)!;
     }
 
     if (this.match(TType.MINUS_MINUS)) {
