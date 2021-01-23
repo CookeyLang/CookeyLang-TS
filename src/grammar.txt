@@ -21,8 +21,9 @@ exitStmt => "exit" expression? ";"
 retStmt => "ret" expression? ";"
 block => "{" decl* "}"
 
-expression => assignment
-assignment => IDENTIFIER ( ( "=" | "+=" | "-=" | "*=" | "/=" | "^=" | "%=" ) assignment | ( "++" | "--" ) ) | logic_or
+expression => ternary
+ternary => assignment ( "?" expression ":" ternary )?
+assignment => ( IDENTIFIER ( "=" | "+=" | "-=" | "*=" | "/=" | "^=" | "%=" ) assignment | ( "++" | "--" ) ) | logic_or
 
 logic_or => logic_and ( "or" logic_and )*
 logic_and => equality ( "and" equality )*

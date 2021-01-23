@@ -186,7 +186,21 @@ class Parser {
 
 
   private expression() {
-    return this.assignment();
+    return this.ternary();
+  }
+
+  private ternary() {
+    let expr = this.assignment();
+
+    if (this.match(TType.QUE)) {
+      let thenBr = this.expression();
+      this.consume(TType.COL, "Expected ':' after ternary branch.");
+      let elseBr = this.ternary();
+
+      expr = new Stmt.IfStmt(expr, thenBr, elseBr);
+    }
+
+    return expr;
   }
 
   private assignment(): Base {
@@ -334,12 +348,6 @@ class Parser {
       }
 
       return this.desugarAssign(lineData, right, op, 1)!;
-    }
-
-    if (this.match(TType.MINUS_MINUS)) {
-      let lineData = this.previous();
-      let right = this.unary();
-      return this.desugarAssign(lineData, right, TType.MINUS, 1)!;
     }
 
     return this.call();

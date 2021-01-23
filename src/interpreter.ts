@@ -79,8 +79,8 @@ class Interpreter extends Visitor {
   }
 
   IfStmt(self: Stmt.IfStmt): literal {
-    if (self.condition.visit(this) == true) self.thenBr.visit(this);
-    else if (self.elseBr) self.elseBr.visit(this);
+    if (self.condition.visit(this) == true) return self.thenBr.visit(this);
+    else if (self.elseBr) return self.elseBr.visit(this);
     return null;
   }
 

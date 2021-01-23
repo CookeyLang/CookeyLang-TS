@@ -1,0 +1,18 @@
+var a = false;
+printLine(a == false ? "a is false" : "a is true");
+
+
+%% lol what's this?!?
+function callMe() {
+  printLine(false);
+}
+
+function callThis() {
+  printLine(true);
+}
+
+function whichOne(inp) {
+  ret inp == "one" ? 1 : false;
+}
+
+whichOne("one") == 1 ? callThis() : callMe();

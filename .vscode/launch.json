@@ -14,7 +14,7 @@
         "${workspaceFolder}/dist/**/*.js"
       ],
       "args": [
-        "./test/interpreter/sugar.clf"
+        "./test/interpreter/ternary.clf"
       ]
     }
   ]
