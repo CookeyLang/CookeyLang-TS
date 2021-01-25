@@ -14,7 +14,7 @@
         "${workspaceFolder}/dist/**/*.js"
       ],
       "args": [
-        "./test/interpreter/ternary.clf"
+        "./test/projects/callStack.clf"
       ]
     }
   ]

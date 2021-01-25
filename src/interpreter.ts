@@ -36,6 +36,7 @@ class Interpreter extends Visitor {
     } catch (e) {
       if (e instanceof CookeyError) {
         console.log(`<${e.lineData.file}> [ ${e.lineData.line} : ${e.lineData.col} ] ${e.message}`);
+        if (e.calls.length > 0) for (const call of e.calls) console.log(`at <${call.file}> [ ${call.line} : ${call.col} ]`);
       }
     }
   }
@@ -189,7 +190,7 @@ class Interpreter extends Visitor {
 
     if (!(func instanceof FuncCallable)) throw new CookeyError(self.lineData, "Only functions and classes can be called.");
     
-    return func.call(this, args);
+    return func.call(this, args, self.lineData);
   }
 
   Unary(self: Expr.Unary): literal {

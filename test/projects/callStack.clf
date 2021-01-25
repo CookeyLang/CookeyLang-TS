@@ -1,0 +1,15 @@
+function functionA() {
+  functionB();
+}
+
+function functionB() {
+  nestedFunc();
+}
+
+function nestedFunc() {
+  printLine(a);
+  %% attempt to get an undefined variable.
+  %% Let's see what happens!
+}
+
+functionA();
