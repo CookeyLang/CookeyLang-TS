@@ -48,11 +48,8 @@ class Parser {
 
     let body: Base[];
 
-    if (this.match(TType.LEFT_BRACE)) {
-      body = this.block();
-    } else {
-      body = [this.stmt()];
-    }
+    if (this.match(TType.LEFT_BRACE)) body = this.block();
+    else body = [this.stmt()];
 
     return new Stmt.FuncDecl(name, params, body);
   }
@@ -186,6 +183,28 @@ class Parser {
 
 
   private expression() {
+    return this.lambda();
+  }
+
+  private lambda() {
+    if (this.match(TType.LAMBDA)) {
+      let lineData = this.consume(TType.LEFT_PAREN, "Expected '(' after lambda keyword.")!;
+      let params: Token[] = [];
+      if (this.peek().type != TType.RIGHT_PAREN) {
+        do {
+          params.push(this.consume(TType.IDENTIFIER, "Expected parameter name.")!);
+        } while (this.match(TType.COMMA));
+      }
+      this.consume(TType.RIGHT_PAREN, "Expected ')' after lamda.");
+      this.consume(TType.COL, "Expected ':' after ')'.");
+
+      let body: Base[];
+      if (this.match(TType.LEFT_BRACE)) body = this.block();
+      else body = [new Stmt.RetStmt(lineData, this.expression())];
+
+      return new Expr.Lambda(lineData, params, body);
+    }
+
     return this.ternary();
   }
 

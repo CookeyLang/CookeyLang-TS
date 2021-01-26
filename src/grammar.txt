@@ -21,7 +21,8 @@ exitStmt => "exit" expression? ";"
 retStmt => "ret" expression? ";"
 block => "{" decl* "}"
 
-expression => ternary
+expression => lambda
+lambda => ( "lamda" "(" parameters ")" ":" expression ) | ternary
 ternary => assignment ( "?" expression ":" ternary )?
 assignment => ( IDENTIFIER ( "=" | "+=" | "-=" | "*=" | "/=" | "^=" | "%=" ) assignment | ( "++" | "--" ) ) | logic_or
 

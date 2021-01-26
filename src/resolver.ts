@@ -66,6 +66,10 @@ class Resolver extends Visitor {
     this.resolveFunc(self);
   }
 
+  Lambda(self: Expr.Lambda) {
+    this.resolveFunc(self);
+  }
+
 
   ExprStmt(self: Stmt.ExprStmt) {
     this.resolve([self.expr]);
@@ -135,14 +139,16 @@ class Resolver extends Visitor {
     }
   }
 
-  private resolveFunc(func: Stmt.FuncDecl) {
-    this.beginScope();
-    for (const param of func.params) {
-      this.declare(param);
-      this.define(param);
+  private resolveFunc(func: Base) {
+    if (func instanceof Stmt.FuncDecl || func instanceof Expr.Lambda) {
+      this.beginScope();
+      for (const param of func.params) {
+        this.declare(param);
+        this.define(param);
+      }
+      this.resolve(func.body);
+      this.endScope();
     }
-    this.resolve(func.body);
-    this.endScope();
   }
 
   private beginScope() {

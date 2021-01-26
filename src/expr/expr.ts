@@ -41,6 +41,19 @@ class Logic extends Base {
   visit(visit: Visitor): literal { return visit.Logic(this); }
 }
 
+class Lambda extends Base {
+  params: Token[];
+  body: Base[];
+
+  constructor(lineData: Token, params: Token[], body: Base[]) {
+    super(lineData);
+    this.params = params;
+    this.body = body;
+  }
+
+  visit(visit: Visitor): literal { return visit.Lambda(this); }
+}
+
 class Binary extends Base {
   left: Base;
   op: Token;
@@ -104,4 +117,4 @@ class Grouping extends Base {
   visit(visit: Visitor): literal { return visit.Grouping(this); }
 }
 
-export { Literal, Assign, Logic, Binary, Call, Unary, Variable, Grouping };
+export { Literal, Assign, Logic, Lambda,  Binary, Call, Unary, Variable, Grouping };

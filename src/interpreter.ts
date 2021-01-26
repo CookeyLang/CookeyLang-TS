@@ -133,6 +133,10 @@ class Interpreter extends Visitor {
     return self.right.visit(this);
   }
 
+  Lambda(self: Expr.Lambda): literal {
+    return new UserCallable(self, this.environment);
+  }
+
   Binary(self: Expr.Binary): literal {
     let left: literal = self.left.visit(this);
     let right: literal = self.right.visit(this);

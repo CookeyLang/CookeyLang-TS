@@ -3,7 +3,9 @@ import { Environment } from "./environment";
 import { defualtToken, Token } from "./token";
 import { CookeyError, CookeyRet } from "./errors";
 
+import { Base } from "./expr/base";
 import * as Stmt from "./expr/stmt";
+import * as Expr from "./expr/expr";
 
 
 class FuncCallable {
@@ -19,32 +21,39 @@ class FuncCallable {
 }
 
 class UserCallable extends FuncCallable {
-  private decl: Stmt.FuncDecl;
+  private decl: Base;
   private closure: Environment;
 
-  constructor(decl: Stmt.FuncDecl, closure: Environment) {
-    super(0, () => {}, () => `<function ${this.decl.name.value}>`);
+  constructor(decl: Base, closure: Environment) {
+    super(0, () => {}, () => {
+      if (this.decl instanceof Stmt.FuncDecl) return `<function ${this.decl.name.value}>`;
+      else if (this.decl instanceof Expr.Lambda) return `<anonymous function>`;
+      return ""; // not reached
+    });
     
     this.decl = decl;
-    this.arity = this.decl.params.length;
+    if (this.decl instanceof Stmt.FuncDecl || this.decl instanceof Expr.Lambda) this.arity = this.decl.params.length;
 
     this.closure = closure;
     
     this.call = (interpreter: Interpreter, args: literal[], callFrom: Token) => {
       let env = new Environment(this.closure);
-      // define arguments/parameters
-      for (let i = 0; i < this.decl.params.length; i++) {
-        env.define(defualtToken, this.decl.params[i], args[i]);
-      }
       
-      try {
-        interpreter.initBlock(this.decl.body, env);
-      } catch (ret) {
-        if (ret instanceof CookeyRet) {
-          return ret.value;
-        } else {
-          if (ret instanceof CookeyError) ret.pushStack(callFrom || this.decl.lineData);
-          throw ret; // prevent it from silently being ignored}
+      if (this.decl instanceof Stmt.FuncDecl || this.decl instanceof Expr.Lambda) {
+        // define arguments/parameters
+        for (let i = 0; i < this.decl.params.length; i++) {
+          env.define(defualtToken, this.decl.params[i], args[i]);
+        }
+        
+        try {
+          interpreter.initBlock(this.decl.body, env);
+        } catch (ret) {
+          if (ret instanceof CookeyRet) {
+            return ret.value;
+          } else {
+            if (ret instanceof CookeyError) ret.pushStack(callFrom || this.decl.lineData);
+            throw ret; // prevent it from silently being ignored}
+          }
         }
       }
 

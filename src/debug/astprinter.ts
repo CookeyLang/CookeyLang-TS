@@ -69,6 +69,12 @@ ${self.body.map(stmt => stmt.visit(this)).join("\n---\n")}
     return `(${self.left.visit(this)} ${TType[self.op.type]} ${self.right.visit(this)})`;
   }
 
+  Lambda(self: Expr.Lambda): string {
+    return `lambda (${self.params.map(p => p.value).join(", ")}): ${`{
+  ${self.body.map(stmt => stmt.visit(this)).join("\n---\n")}
+  }`}`;
+  }
+
   Binary(self: Expr.Binary): string {
     return `(${TType[self.op.type]} ${self.left.visit(this)} ${self.right.visit(this)})`;
   }

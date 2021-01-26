@@ -1,0 +1,5 @@
+var add = lambda (a, b): a + b;
+var sub = lambda (a, b): { ret a - b; };
+
+printLine(add(1, 2));
+printLine(sub(1, 2));
