@@ -22,6 +22,10 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
   }
 
   
+  ClassDecl(self: Stmt.ClassDecl) {
+    return `class ${self.name.value} {\n\n}`;
+  }
+
   FuncDecl(self: Stmt.FuncDecl): string {
     return `function ${self.name.value}(${self.params.map(p => p.value).join(", ")}) {
 ${self.body.map(stmt => stmt.visit(this)).join("\n---\n")}

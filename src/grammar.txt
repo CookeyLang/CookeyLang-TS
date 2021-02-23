@@ -5,8 +5,9 @@ function => IDENTIFIER "(" parameters? ")" stmt
 
 program => decl* EOF
 
-decl => funcDecl | varDecl | stmt
+decl => classDecl | funcDecl | varDecl | stmt
 
+classDecl => "class" IDENTIFIER "{" function* "}"
 funcDecl => "function" function
 varDecl => ( "var" | "final" ) IDENTIFIER ( "=" expression )? ";"
 
@@ -22,7 +23,7 @@ retStmt => "ret" expression? ";"
 block => "{" decl* "}"
 
 expression => lambda
-lambda => ( "lamda" "(" parameters ")" ":" expression ) | ternary
+lambda => ( "lamda" ( "(" parameters ")" )? ":" expression ) | ternary
 ternary => assignment ( "?" expression ":" ternary )?
 assignment => ( IDENTIFIER ( "=" | "+=" | "-=" | "*=" | "/=" | "^=" | "%=" ) assignment | ( "++" | "--" ) ) | logic_or
 

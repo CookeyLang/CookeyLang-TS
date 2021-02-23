@@ -17,6 +17,19 @@ class FuncDecl extends Base {
   visit(visit: Visitor): literal { return visit.FuncDecl(this); }
 }
 
+class ClassDecl extends Base {
+  name: Token;
+  methods: FuncDecl[];
+
+  constructor(name: Token, methods: FuncDecl[]) {
+    super(name);
+    this.name = name;
+    this.methods = methods;
+  }
+
+  visit(visit: Visitor): literal { return visit.ClassDecl(this); }
+}
+
 class VarDecl extends Base {
   mut: Token;
   name: Token;
@@ -105,4 +118,4 @@ class Block extends Base {
   visit(visit: Visitor): literal { return visit.Block(this); }
 }
 
-export { FuncDecl, VarDecl, ExprStmt, IfStmt, WhileStmt, ExitStmt, RetStmt, Block };
+export { FuncDecl, ClassDecl, VarDecl, ExprStmt, IfStmt, WhileStmt, ExitStmt, RetStmt, Block };

@@ -1,0 +1,4 @@
+%% old style
+printLine((lambda (): 5)());
+%% YEAHHHH NEWWWW STYLLLEEEEEE LET'S GO
+printLine((lambda: 5)());

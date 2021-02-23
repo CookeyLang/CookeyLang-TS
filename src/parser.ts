@@ -28,10 +28,25 @@ class Parser {
 
 
   private decl() {
+    if (this.match(TType.CLASS)) return this.classDecl();
     if (this.match(TType.FUNCTION)) return this.funcDecl("function");
     if (this.match(TType.VAR, TType.FINAL)) return this.varDecl();
 
     return this.stmt();
+  }
+
+  private classDecl() {
+    let name = this.consume(TType.IDENTIFIER, "Expected class name after 'class' keyword.");
+    this.consume(TType.LEFT_BRACE, "Expected '{' after class name.");
+
+    let methods: Stmt.FuncDecl[] = [];
+    while (this.peek().type != TType.RIGHT_BRACE && this.isValid()) {
+      methods.push(this.funcDecl("method"));
+    }
+
+    this.consume(TType.RIGHT_BRACE, "Expected '}' after class body.");
+
+    return new Stmt.ClassDecl(name!, methods);
   }
 
   private funcDecl(type: string) { // methods are functions too
@@ -188,15 +203,20 @@ class Parser {
 
   private lambda() {
     if (this.match(TType.LAMBDA)) {
-      let lineData = this.consume(TType.LEFT_PAREN, "Expected '(' after lambda keyword.")!;
+      let lineData = this.previous();
       let params: Token[] = [];
-      if (this.peek().type != TType.RIGHT_PAREN) {
-        do {
-          params.push(this.consume(TType.IDENTIFIER, "Expected parameter name.")!);
-        } while (this.match(TType.COMMA));
-      }
-      this.consume(TType.RIGHT_PAREN, "Expected ')' after lamda.");
-      this.consume(TType.COL, "Expected ':' after ')'.");
+
+      if (this.match(TType.LEFT_PAREN)) {
+        let params: Token[] = [];
+        if (this.peek().type != TType.RIGHT_PAREN) {
+          do {
+            params.push(this.consume(TType.IDENTIFIER, "Expected parameter name.")!);
+          } while (this.match(TType.COMMA));
+        }
+        this.consume(TType.RIGHT_PAREN, "Expected ')' after lamda parameters.");
+        this.consume(TType.COL, "Expected ':' after parameters.");
+      } else this.consume(TType.COL, "Expected ':' after lambda keyword.");
+
 
       let body: Base[];
       if (this.match(TType.LEFT_BRACE)) body = this.block();
@@ -470,7 +490,6 @@ class Parser {
       switch (this.peek().type) {
         case TType.CLASS:
         case TType.FUNCTION:
-        case TType.LAMBDA:
         case TType.VAR:
         case TType.FINAL:
         case TType.DELETEVARIABLE:

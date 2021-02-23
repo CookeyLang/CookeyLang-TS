@@ -1,5 +1,18 @@
 var add = lambda (a, b): a + b;
 var sub = lambda (a, b): { ret a - b; };
+var addFive = lambda (a): lambda (b): lambda (c): lambda (d): lambda (e): a + b + c + d + e;
 
 printLine(add(1, 2));
 printLine(sub(1, 2));
+printLine(addFive(1)(2)(3)(4)(5));
+
+var addToFive = addFive(2)(1)(1)(1);
+printLine(addToFive(5));
+
+function callMany(fn, times) {
+  for (var i = 0; i < times; i++) fn();
+}
+
+callMany(lambda (): {
+  printLine("CookeyLang Rocks!");
+}, 5);
