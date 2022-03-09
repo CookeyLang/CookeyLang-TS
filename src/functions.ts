@@ -1,6 +1,6 @@
 import { Interpreter } from "./interpreter";
 import { Environment } from "./environment";
-import { defualtToken, Token } from "./token";
+import { finalToken, Token } from "./token";
 import { CookeyError, CookeyRet } from "./errors";
 
 import { Base } from "./expr/base";
@@ -10,7 +10,7 @@ import * as Expr from "./expr/expr";
 
 class FuncCallable {
   arity: number;
-  call(_: Interpreter, _1: literal[], _2?: Token): literal {};
+  call(_interpreter: Interpreter, _args: literal[], _callFrom?: Token): literal { };
   toString(): string { return "" };
 
   constructor(arity: number = 0, call: (interpreter: Interpreter, args: literal[]) => literal = () => {}, toString: () => string = () => "") {
@@ -42,7 +42,7 @@ class UserCallable extends FuncCallable {
       if (this.decl instanceof Stmt.FuncDecl || this.decl instanceof Expr.Lambda) {
         // define arguments/parameters
         for (let i = 0; i < this.decl.params.length; i++) {
-          env.define(defualtToken, this.decl.params[i], args[i]);
+          env.define(finalToken, this.decl.params[i], args[i]);
         }
         
         try {
@@ -52,7 +52,7 @@ class UserCallable extends FuncCallable {
             return ret.value;
           } else {
             if (ret instanceof CookeyError) ret.pushStack(callFrom || this.decl.lineData);
-            throw ret; // prevent it from silently being ignored}
+            throw ret; // prevent it from silently being ignored
           }
         }
       }

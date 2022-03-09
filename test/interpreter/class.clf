@@ -1,0 +1,10 @@
+class MyClass {
+  test() {
+    
+  }
+}
+
+printLine(MyClass);
+
+var test = MyClass();
+printLine(test);

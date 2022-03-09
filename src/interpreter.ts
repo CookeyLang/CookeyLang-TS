@@ -1,4 +1,4 @@
-import { defualtToken, identifierToken, Token, TType } from "./token";
+import { finalToken, identifierToken, Token, TType } from "./token";
 import { Base } from "./expr/base";
 import { Visitor } from "./expr/visitor";
 import * as Stmt from "./expr/stmt";
@@ -8,6 +8,7 @@ import { Environment } from "./environment";
 
 import { CookeyError, CookeyRet } from "./errors";
 import { FuncCallable, UserCallable } from "./functions";
+import { CookeyClass } from "./classes";
 
 
 class Interpreter extends Visitor {
@@ -23,9 +24,9 @@ class Interpreter extends Visitor {
     this.trees = trees;
     this.environment = this.globals;
 
-    this.globals.define(defualtToken, identifierToken("printLine"), new FuncCallable(1, (_, args) => console.log(this.stringify(args[0])), () => "<Native Function>"));
-    this.globals.define(defualtToken, identifierToken("print"), new FuncCallable(1, (_, args) => process.stdout.write(this.stringify(args[0])), () => "<Native Function>"));
-    this.globals.define(defualtToken, identifierToken("clearConsole"), new FuncCallable(0, () => console.clear(), () => "<Native Function>"));
+    this.globals.define(finalToken, identifierToken("printLine"), new FuncCallable(1, (_, args) => console.log(this.stringify(args[0])), () => "<Native Function>"));
+    this.globals.define(finalToken, identifierToken("print"), new FuncCallable(1, (_, args) => process.stdout.write(this.stringify(args[0])), () => "<Native Function>"));
+    this.globals.define(finalToken, identifierToken("clearConsole"), new FuncCallable(0, () => console.clear(), () => "<Native Function>"));
   }
 
   init() {
@@ -61,8 +62,14 @@ class Interpreter extends Visitor {
   
   FuncDecl(self: Stmt.FuncDecl): literal {
     let func = new UserCallable(self, this.environment);
-    this.environment.define(new Token(0, 0, "<native>", TType.VAR, "var"), self.name, func);
+    this.environment.define(finalToken, self.name, func);
     return null;
+  }
+
+  ClassDecl(self: Stmt.ClassDecl) {
+    this.environment.define(finalToken, self.name.value, null);
+    let newClass = new CookeyClass(self.name.value);
+    this.environment.define(finalToken, self.name, newClass);
   }
 
   VarDecl(self: Stmt.VarDecl): literal {

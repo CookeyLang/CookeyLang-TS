@@ -66,6 +66,11 @@ class Resolver extends Visitor {
     this.resolveFunc(self);
   }
 
+  ClassDecl(self: Stmt.ClassDecl) {
+    this.declare(self.name);
+    this.define(self.name);
+  }
+
   Lambda(self: Expr.Lambda) {
     this.resolveFunc(self);
   }

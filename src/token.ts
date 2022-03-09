@@ -43,7 +43,7 @@ class Token {
   }
 }
 
-const defualtToken = new Token(0, 0, "<native>", TType.FINAL, ""); // so we don't have to write out debugging symbols
+const finalToken = new Token(0, 0, "<native>", TType.FINAL, ""); // so we don't have to write out debugging symbols
 function identifierToken(name: string) { return new Token(0, 0, "<native>", TType.IDENTIFIER, name); }
 
-export { Token, TType, defualtToken, identifierToken };
+export { Token, TType, finalToken, identifierToken };

@@ -2,7 +2,7 @@ import { Base } from "./expr/base";
 import * as Stmt from "./expr/stmt";
 import * as Expr from "./expr/expr";
 
-import { TType, Token, defualtToken } from "./token";
+import { TType, Token, finalToken } from "./token";
 
 
 class Parser {
@@ -437,7 +437,7 @@ class Parser {
     if (this.match(TType.IDENTIFIER)) return new Expr.Variable(this.previous());
 
     this.error(`Unexpected token ${TType[this.peek().type]}.`);
-    return new Base(defualtToken);
+    return new Base(finalToken);
   }
 
 

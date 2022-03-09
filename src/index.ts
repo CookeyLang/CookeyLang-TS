@@ -33,7 +33,7 @@ async function interpretText(code: string, file: string, debug = false) {
   if (resolver.hasError) return;
 
   let result = interpreter.init();
-  console.log(result);
+  // console.log(result);
 
   return result;
 }

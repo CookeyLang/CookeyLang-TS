@@ -22,8 +22,8 @@ ${this.trees.map(tree => tree.visit(this)).join("\n---\n")}
   }
 
   
-  ClassDecl(self: Stmt.ClassDecl) {
-    return `class ${self.name.value} {\n\n}`;
+  ClassDecl(self: Stmt.ClassDecl): string {
+    return `class ${self.name.value} {\n${self.methods.map(n => n.visit(this))}\n}`;
   }
 
   FuncDecl(self: Stmt.FuncDecl): string {
